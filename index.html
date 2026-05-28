@@ -2,9 +2,11 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>OX Game - Ronaldo Edition</title>
+    <title>OX Game - Siuuu Edition</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { text-align: center; font-family: sans-serif; background: #1a1a1a; color: white; padding-top: 20px; }
+        
         .grid { 
             display: grid; grid-template-columns: repeat(3, 90px); gap: 10px; 
             justify-content: center; margin-top: 20px; background-color: #ff9933; 
@@ -17,22 +19,23 @@
         }
         .x-color { color: #ff4d4d; }
         .o-color { color: #4d94ff; }
-        
+        #status { margin-top: 20px; font-size: 20px; font-weight: bold; }
+
         /* የሮናልዶ አኒሜሽን */
         #ronaldo-img {
             display: none; width: 150px; margin-top: 20px;
-            animation: siuuu 1s ease-in-out infinite;
+            animation: siuuu 0.6s ease-in-out infinite;
         }
         @keyframes siuuu {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0); }
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
         }
     </style>
 </head>
 <body>
     <h2>OX ጨዋታ</h2>
-    <div id="status">የሚጫወተው: X (ቀይ)</div>
+    <div id="status">የሚጫወተው: <span class="x-color">X (ቀይ)</span></div>
     <div class="grid" id="grid"></div>
     
     <img id="ronaldo-img" src="https://media.tenor.com/images/3f191196426372134267f81491566455/tenor.gif" alt="Siuuu">
@@ -43,6 +46,11 @@
 
         function render() {
             const grid = document.getElementById("grid");
+            const status = document.getElementById("status");
+            status.innerHTML = turn === "X" ? 
+                'የሚጫወተው: <span class="x-color">X (ቀይ)</span>' : 
+                'የሚጫወተው: <span class="o-color">O (ሰማያዊ)</span>';
+            
             grid.innerHTML = "";
             board.forEach((val, i) => {
                 let colorClass = val === "X" ? "x-color" : "o-color";
@@ -64,9 +72,12 @@
             for (let line of lines) {
                 const [a, b, c] = line;
                 if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-                    document.getElementById("ronaldo-img").style.display = "block"; // ሮናልዶ ይታያል
-                    alert(board[a] + " አሸንፏል! Siuuu!");
-                    resetGame();
+                    // አሸናፊ ሲኖር ሮናልዶ ይታያል
+                    document.getElementById("ronaldo-img").style.display = "inline-block";
+                    setTimeout(() => {
+                        alert(board[a] + " አሸንፏል! Siuuu!");
+                        resetGame();
+                    }, 500);
                     return;
                 }
             }
