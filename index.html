@@ -6,6 +6,40 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { text-align: center; font-family: sans-serif; background: #1a1a1a; color: white; padding-top: 20px; }
+        <style>
+    body { 
+        text-align: center; 
+        font-family: sans-serif; 
+        background: #1a1a1a; /* ዋናው የጨዋታው ዳራ */
+        color: white; 
+        padding-top: 20px; 
+    }
+    
+    /* የመጫወቻው ሜዳ ዳራ */
+    .grid { 
+        display: grid; 
+        grid-template-columns: repeat(3, 90px); 
+        gap: 10px; 
+        justify-content: center; 
+        margin-top: 20px; 
+        background-color: #ff9933; /* ብርቱካናማ ቀለም */
+        padding: 10px; 
+        border-radius: 15px; 
+    }
+
+    .cell { 
+        width: 90px; height: 90px; 
+        background: #ffffff; /* ሳጥኖቹ በብርቱካናማው ላይ እንዲታዩ ነጭ */
+        display: flex; align-items: center; justify-content: center; 
+        font-size: 40px; font-weight: bold; cursor: pointer; border-radius: 10px; 
+    }
+    
+    .x-color { color: #ff4d4d; } 
+    .o-color { color: #4d94ff; } 
+    #status { margin-top: 20px; font-size: 20px; font-weight: bold; }
+</style>
+
+
         .grid { display: grid; grid-template-columns: repeat(3, 90px); gap: 10px; justify-content: center; margin-top: 20px; }
         .cell { 
             width: 90px; height: 90px; background: #333; 
