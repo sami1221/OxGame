@@ -13,7 +13,6 @@
             font-size: 40px; font-weight: bold; cursor: pointer; border-radius: 10px; 
             border: 2px solid #555;
         }
-        /* የቀይ እና የሰማያዊ ቀለማት */
         .x-color { color: #ff4d4d; } /* ቀይ ለ X */
         .o-color { color: #4d94ff; } /* ሰማያዊ ለ O */
         #status { margin-top: 20px; font-size: 20px; font-weight: bold; }
@@ -31,6 +30,8 @@
         function render() {
             const grid = document.getElementById("grid");
             const status = document.getElementById("status");
+            
+            // ተራውን ማሳያ ማዘመን
             status.innerHTML = turn === "X" ? 
                 'የሚጫወተው: <span class="x-color">X (ቀይ)</span>' : 
                 'የሚጫወተው: <span class="o-color">O (ሰማያዊ)</span>';
@@ -64,9 +65,10 @@
         function makeMove(i) {
             if(board[i] === "") {
                 board[i] = turn;
+                // ተራውን መቀየር ያለበት ቦታው ከተሞላ በኋላ ነው
+                turn = turn === "X" ? "O" : "X";
                 render();
                 checkWinner();
-                turn = turn === "X" ? "O" : "X";
             }
         }
         render();
