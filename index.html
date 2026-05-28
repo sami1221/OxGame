@@ -5,7 +5,6 @@
     <title>OX Game</title>
     <style>
         body { text-align: center; font-family: sans-serif; background: #1a1a1a; color: white; padding-top: 20px; }
-        
         .grid { 
             display: grid; grid-template-columns: repeat(3, 90px); gap: 10px; 
             justify-content: center; margin-top: 20px; background-color: #ff9933; 
@@ -19,23 +18,18 @@
         .x-color { color: #ff4d4d; }
         .o-color { color: #4d94ff; }
         
-        /* አኒሜሽን */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+        #ronaldo-img {
+            width: 150px; margin-top: 20px;
+            /* በመጀመሪያ ምስሉ እንዳይታይ ተደርጓል */
+            visibility: hidden; 
         }
-        .win-anim { animation: pulse 0.5s infinite; border: 4px solid gold; }
-        
-        #ronaldo-container { margin-top: 20px; }
-        #ronaldo-img { display: none; width: 150px; }
     </style>
 </head>
 <body>
     <h2>OX ጨዋታ</h2>
     <div id="status">የሚጫወተው: X</div>
     <div class="grid" id="grid"></div>
-    <div id="ronaldo-container"><img id="ronaldo-img" src="https://media.tenor.com/images/3f191196426372134267f81491566455/tenor.gif"></div>
+    <img id="ronaldo-img" src="https://media.tenor.com/images/3f191196426372134267f81491566455/tenor.gif">
 
     <script>
         let board = ["", "", "", "", "", "", "", "", ""];
@@ -63,14 +57,14 @@
         function checkWinner() {
             const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             for (let line of lines) {
-                const [a, b, c] = line;
-                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-                    // አኒሜሽን ማሳያ
-                    const cells = document.getElementsByClassName("cell");
-                    line.forEach(index => cells[index].classList.add("win-anim"));
-                    document.getElementById("ronaldo-img").style.display = "inline-block";
+                if (board[line[0]] && board[line[0]] === board[line[1]] && board[line[0]] === board[line[2]]) {
+                    // ሮናልዶ እንዲታይ ማድረግ
+                    document.getElementById("ronaldo-img").style.visibility = "visible";
                     
-                    setTimeout(() => { alert(board[a] + " አሸንፏል! Siuuu!"); resetGame(); }, 500);
+                    setTimeout(() => { 
+                        alert(board[line[0]] + " አሸንፏል! Siuuu!"); 
+                        resetGame(); 
+                    }, 500);
                     return true;
                 }
             }
@@ -81,7 +75,7 @@
         function resetGame() { 
             board = ["", "", "", "", "", "", "", "", ""]; 
             turn = "X"; 
-            document.getElementById("ronaldo-img").style.display = "none";
+            document.getElementById("ronaldo-img").style.visibility = "hidden";
             render(); 
         }
         render();
