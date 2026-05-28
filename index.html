@@ -9,11 +9,10 @@
             text-align: center; font-family: sans-serif; 
             background: #1a1a1a; color: white; padding-top: 20px; 
         }
-        /* የብርቱካናማ ሜዳ ማስተካከያ */
         .grid { 
             display: grid; grid-template-columns: repeat(3, 90px); 
             gap: 10px; justify-content: center; margin-top: 20px; 
-            background-color: #ff9933; /* ብርቱካናማ ዳራ */
+            background-color: #ff9933 !important; /* !important ማከል ኮዱ በግድ እንዲሰራ ያደርገዋል */
             padding: 10px; border-radius: 15px; 
         }
         .cell { 
@@ -21,8 +20,8 @@
             display: flex; align-items: center; justify-content: center; 
             font-size: 40px; font-weight: bold; cursor: pointer; border-radius: 10px; 
         }
-        .x-color { color: #ff4d4d; } /* ቀይ ለ X */
-        .o-color { color: #4d94ff; } /* ሰማያዊ ለ O */
+        .x-color { color: #ff4d4d; } 
+        .o-color { color: #4d94ff; } 
         #status { margin-top: 20px; font-size: 20px; font-weight: bold; }
     </style>
 </head>
@@ -38,11 +37,40 @@
         function render() {
             const grid = document.getElementById("grid");
             const status = document.getElementById("status");
-            
-            // የቱ ተራ እንደሆነ ማሳያ
             status.innerHTML = turn === "X" ? 
                 'የሚጫወተው: <span class="x-color">X (ቀይ)</span>' : 
                 'የሚጫወተው: <span class="o-color">O (ሰማያዊ)</span>';
             
             grid.innerHTML = "";
-            board.forEach((val,
+            board.forEach((val, i) => {
+                let colorClass = val === "X" ? "x-color" : "o-color";
+                grid.innerHTML += `<div class="cell ${colorClass}" onclick="makeMove(${i})">${val}</div>`;
+            });
+        }
+
+        function makeMove(i) {
+            if(board[i] === "") {
+                board[i] = turn;
+                turn = turn === "X" ? "O" : "X";
+                render();
+                checkWinner();
+            }
+        }
+
+        function checkWinner() {
+            const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for (let line of lines) {
+                const [a, b, c] = line;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    alert(board[a] + " አሸንፏል!");
+                    resetGame(); return;
+                }
+            }
+            if (!board.includes("")) { alert("አቻ ነው!"); resetGame(); }
+        }
+
+        function resetGame() { board = ["", "", "", "", "", "", "", "", ""]; turn = "X"; render(); }
+        render();
+    </script>
+</body>
+</html>
