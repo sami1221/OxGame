@@ -9,10 +9,11 @@
             text-align: center; font-family: sans-serif; 
             background: #1a1a1a; color: white; padding-top: 20px; 
         }
+        /* የሜዳው ብርቱካናማ ቀለም */
         .grid { 
             display: grid; grid-template-columns: repeat(3, 90px); 
             gap: 10px; justify-content: center; margin-top: 20px; 
-            background-color: #ff9933 !important; /* !important ማከል ኮዱ በግድ እንዲሰራ ያደርገዋል */
+            background-color: #ff9933; 
             padding: 10px; border-radius: 15px; 
         }
         .cell { 
@@ -20,9 +21,17 @@
             display: flex; align-items: center; justify-content: center; 
             font-size: 40px; font-weight: bold; cursor: pointer; border-radius: 10px; 
         }
-        .x-color { color: #ff4d4d; } 
-        .o-color { color: #4d94ff; } 
+        .x-color { color: #ff4d4d; } /* ቀይ ለ X */
+        .o-color { color: #4d94ff; } /* ሰማያዊ ለ O */
         #status { margin-top: 20px; font-size: 20px; font-weight: bold; }
+
+        /* የአሸናፊነት አኒሜሽን */
+        @keyframes winAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .winner-effect { animation: winAnimation 0.5s ease-in-out infinite; }
     </style>
 </head>
 <body>
@@ -48,6 +57,33 @@
             });
         }
 
+        function highlightWinner(line) {
+            line.forEach(index => {
+                document.querySelectorAll('.cell')[index].classList.add('winner-effect');
+            });
+        }
+
+        function checkWinner() {
+            const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for (let line of lines) {
+                const [a, b, c] = line;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    highlightWinner(line);
+                    setTimeout(() => { alert(board[a] + " አሸንፏል!"); resetGame(); }, 500);
+                    return;
+                }
+            }
+            if (!board.includes("")) { 
+                setTimeout(() => { alert("አቻ ነው!"); resetGame(); }, 100); 
+            }
+        }
+
+        function resetGame() { 
+            board = ["", "", "", "", "", "", "", "", ""]; 
+            turn = "X"; 
+            render(); 
+        }
+
         function makeMove(i) {
             if(board[i] === "") {
                 board[i] = turn;
@@ -56,20 +92,6 @@
                 checkWinner();
             }
         }
-
-        function checkWinner() {
-            const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            for (let line of lines) {
-                const [a, b, c] = line;
-                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-                    alert(board[a] + " አሸንፏል!");
-                    resetGame(); return;
-                }
-            }
-            if (!board.includes("")) { alert("አቻ ነው!"); resetGame(); }
-        }
-
-        function resetGame() { board = ["", "", "", "", "", "", "", "", ""]; turn = "X"; render(); }
         render();
     </script>
 </body>
