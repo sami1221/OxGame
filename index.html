@@ -2,8 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>OX Game - Siuuu Edition</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>OX Game</title>
     <style>
         body { text-align: center; font-family: sans-serif; background: #1a1a1a; color: white; padding-top: 20px; }
         
@@ -19,26 +18,24 @@
         }
         .x-color { color: #ff4d4d; }
         .o-color { color: #4d94ff; }
-        #status { margin-top: 20px; font-size: 20px; font-weight: bold; }
-
-        /* የሮናልዶ አኒሜሽን */
-        #ronaldo-img {
-            display: none; width: 150px; margin-top: 20px;
-            animation: siuuu 0.6s ease-in-out infinite;
+        
+        /* አኒሜሽን */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
-        @keyframes siuuu {
-            0% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-20px) scale(1.1); }
-            100% { transform: translateY(0) scale(1); }
-        }
+        .win-anim { animation: pulse 0.5s infinite; border: 4px solid gold; }
+        
+        #ronaldo-container { margin-top: 20px; }
+        #ronaldo-img { display: none; width: 150px; }
     </style>
 </head>
 <body>
     <h2>OX ጨዋታ</h2>
-    <div id="status">የሚጫወተው: <span class="x-color">X (ቀይ)</span></div>
+    <div id="status">የሚጫወተው: X</div>
     <div class="grid" id="grid"></div>
-    
-    <img id="ronaldo-img" src="https://media.tenor.com/images/3f191196426372134267f81491566455/tenor.gif" alt="Siuuu">
+    <div id="ronaldo-container"><img id="ronaldo-img" src="https://media.tenor.com/images/3f191196426372134267f81491566455/tenor.gif"></div>
 
     <script>
         let board = ["", "", "", "", "", "", "", "", ""];
@@ -46,15 +43,11 @@
 
         function render() {
             const grid = document.getElementById("grid");
-            const status = document.getElementById("status");
-            status.innerHTML = turn === "X" ? 
-                'የሚጫወተው: <span class="x-color">X (ቀይ)</span>' : 
-                'የሚጫወተው: <span class="o-color">O (ሰማያዊ)</span>';
-            
+            document.getElementById("status").innerText = "የሚጫወተው: " + turn;
             grid.innerHTML = "";
             board.forEach((val, i) => {
-                let colorClass = val === "X" ? "x-color" : "o-color";
-                grid.innerHTML += `<div class="cell ${colorClass}" onclick="makeMove(${i})">${val}</div>`;
+                let color = val === "X" ? "x-color" : "o-color";
+                grid.innerHTML += `<div class="cell ${color}" onclick="makeMove(${i})">${val}</div>`;
             });
         }
 
@@ -62,7 +55,7 @@
             if(board[i] === "") {
                 board[i] = turn;
                 render();
-                checkWinner();
+                if(checkWinner()) return;
                 turn = turn === "X" ? "O" : "X";
             }
         }
@@ -72,16 +65,17 @@
             for (let line of lines) {
                 const [a, b, c] = line;
                 if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-                    // አሸናፊ ሲኖር ሮናልዶ ይታያል
+                    // አኒሜሽን ማሳያ
+                    const cells = document.getElementsByClassName("cell");
+                    line.forEach(index => cells[index].classList.add("win-anim"));
                     document.getElementById("ronaldo-img").style.display = "inline-block";
-                    setTimeout(() => {
-                        alert(board[a] + " አሸንፏል! Siuuu!");
-                        resetGame();
-                    }, 500);
-                    return;
+                    
+                    setTimeout(() => { alert(board[a] + " አሸንፏል! Siuuu!"); resetGame(); }, 500);
+                    return true;
                 }
             }
-            if (!board.includes("")) { alert("አቻ ነው!"); resetGame(); }
+            if (!board.includes("")) { alert("አቻ!"); resetGame(); }
+            return false;
         }
 
         function resetGame() { 
