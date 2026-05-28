@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>OX Game</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { text-align: center; font-family: sans-serif; background: #1a1a1a; color: white; }
         .grid { display: grid; grid-template-columns: repeat(3, 80px); gap: 5px; justify-content: center; margin-top: 20px; }
@@ -13,9 +14,25 @@
     <h2>OX Game</h2>
     <div class="grid" id="grid">
         <script>
-            for(let i=0; i<9; i++) {
-                document.write(`<div class="cell" onclick="this.innerText='X'"></div>`);
+            let board = ["", "", "", "", "", "", "", "", ""];
+            let turn = "X";
+            
+            function render() {
+                const grid = document.getElementById("grid");
+                grid.innerHTML = "";
+                board.forEach((val, i) => {
+                    grid.innerHTML += `<div class="cell" onclick="makeMove(${i})">${val}</div>`;
+                });
             }
+
+            function makeMove(i) {
+                if(board[i] === "") {
+                    board[i] = turn;
+                    turn = turn === "X" ? "O" : "X";
+                    render();
+                }
+            }
+            render();
         </script>
     </div>
 </body>
