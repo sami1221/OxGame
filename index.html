@@ -2,18 +2,12 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>OX Game</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>OX Game - Ronaldo Edition</title>
     <style>
-        body { 
-            text-align: center; font-family: sans-serif; 
-            background: #1a1a1a; color: white; padding-top: 20px; 
-        }
-        /* የሜዳው ብርቱካናማ ቀለም */
+        body { text-align: center; font-family: sans-serif; background: #1a1a1a; color: white; padding-top: 20px; }
         .grid { 
-            display: grid; grid-template-columns: repeat(3, 90px); 
-            gap: 10px; justify-content: center; margin-top: 20px; 
-            background-color: #ff9933; 
+            display: grid; grid-template-columns: repeat(3, 90px); gap: 10px; 
+            justify-content: center; margin-top: 20px; background-color: #ff9933; 
             padding: 10px; border-radius: 15px; 
         }
         .cell { 
@@ -21,23 +15,27 @@
             display: flex; align-items: center; justify-content: center; 
             font-size: 40px; font-weight: bold; cursor: pointer; border-radius: 10px; 
         }
-        .x-color { color: #ff4d4d; } /* ቀይ ለ X */
-        .o-color { color: #4d94ff; } /* ሰማያዊ ለ O */
-        #status { margin-top: 20px; font-size: 20px; font-weight: bold; }
-
-        /* የአሸናፊነት አኒሜሽን */
-        @keyframes winAnimation {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+        .x-color { color: #ff4d4d; }
+        .o-color { color: #4d94ff; }
+        
+        /* የሮናልዶ አኒሜሽን */
+        #ronaldo-img {
+            display: none; width: 150px; margin-top: 20px;
+            animation: siuuu 1s ease-in-out infinite;
         }
-        .winner-effect { animation: winAnimation 0.5s ease-in-out infinite; }
+        @keyframes siuuu {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
     <h2>OX ጨዋታ</h2>
-    <div id="status">የሚጫወተው: <span class="x-color">X (ቀይ)</span></div>
+    <div id="status">የሚጫወተው: X (ቀይ)</div>
     <div class="grid" id="grid"></div>
+    
+    <img id="ronaldo-img" src="https://media.tenor.com/images/3f191196426372134267f81491566455/tenor.gif" alt="Siuuu">
 
     <script>
         let board = ["", "", "", "", "", "", "", "", ""];
@@ -45,11 +43,6 @@
 
         function render() {
             const grid = document.getElementById("grid");
-            const status = document.getElementById("status");
-            status.innerHTML = turn === "X" ? 
-                'የሚጫወተው: <span class="x-color">X (ቀይ)</span>' : 
-                'የሚጫወተው: <span class="o-color">O (ሰማያዊ)</span>';
-            
             grid.innerHTML = "";
             board.forEach((val, i) => {
                 let colorClass = val === "X" ? "x-color" : "o-color";
@@ -57,10 +50,13 @@
             });
         }
 
-        function highlightWinner(line) {
-            line.forEach(index => {
-                document.querySelectorAll('.cell')[index].classList.add('winner-effect');
-            });
+        function makeMove(i) {
+            if(board[i] === "") {
+                board[i] = turn;
+                render();
+                checkWinner();
+                turn = turn === "X" ? "O" : "X";
+            }
         }
 
         function checkWinner() {
@@ -68,29 +64,20 @@
             for (let line of lines) {
                 const [a, b, c] = line;
                 if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-                    highlightWinner(line);
-                    setTimeout(() => { alert(board[a] + " አሸንፏል!"); resetGame(); }, 500);
+                    document.getElementById("ronaldo-img").style.display = "block"; // ሮናልዶ ይታያል
+                    alert(board[a] + " አሸንፏል! Siuuu!");
+                    resetGame();
                     return;
                 }
             }
-            if (!board.includes("")) { 
-                setTimeout(() => { alert("አቻ ነው!"); resetGame(); }, 100); 
-            }
+            if (!board.includes("")) { alert("አቻ ነው!"); resetGame(); }
         }
 
         function resetGame() { 
             board = ["", "", "", "", "", "", "", "", ""]; 
             turn = "X"; 
+            document.getElementById("ronaldo-img").style.display = "none";
             render(); 
-        }
-
-        function makeMove(i) {
-            if(board[i] === "") {
-                board[i] = turn;
-                turn = turn === "X" ? "O" : "X";
-                render();
-                checkWinner();
-            }
         }
         render();
     </script>
