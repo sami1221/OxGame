@@ -1,680 +1,979 @@
 <!DOCTYPE html>
-<html lang="am">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>6 ወር የእንግሊዝኛ ጉዞ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ads to Make Money</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@500;600;700&family=Noto+Sans+Ethiopic:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#1B130F;
-    --surface:#2A1D15;
-    --surface-2:#36261B;
-    --gold:#D7A052;
-    --gold-soft:rgba(215,160,82,0.16);
-    --green:#5C8A6A;
-    --green-soft:rgba(92,138,106,0.18);
-    --rust:#B6552C;
-    --text:#F2E8DA;
-    --text-muted:#A8927E;
-    --line:rgba(215,160,82,0.14);
-    --radius:18px;
-    --display:'Noto Serif Ethiopic', serif;
-    --body:'Noto Sans Ethiopic', sans-serif;
-    --mono:'JetBrains Mono', monospace;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--body);-webkit-tap-highlight-color:transparent;}
-  body{min-height:100vh;}
-  #app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;position:relative;}
-
-  /* ---------- Top bar ---------- */
-  .topbar{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:14px 18px 10px;
-    position:sticky;top:0;z-index:20;
-    background:linear-gradient(180deg, var(--bg) 70%, rgba(27,19,15,0));
-  }
-  .topbar .brand{display:flex;align-items:center;gap:8px;}
-  .topbar .brand-mark{font-size:18px;}
-  .topbar .brand-name{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.2px;}
-  .chip{
-    display:flex;align-items:center;gap:6px;
-    background:var(--surface);border:1px solid var(--line);
-    border-radius:999px;padding:6px 12px;font-family:var(--mono);font-size:12px;color:var(--gold);
+  :root {
+    --bg-deep:    #0A0E1A;
+    --bg-card:    #111827;
+    --bg-card2:   #141D2E;
+    --gold:       #FFD700;
+    --gold-dim:   #C9A800;
+    --gold-glow:  rgba(255,215,0,0.18);
+    --cyan:       #00E5FF;
+    --cyan-dim:   rgba(0,229,255,0.12);
+    --white:      #F0F4FF;
+    --muted:      #7A8499;
+    --success:    #22D47A;
+    --radius:     16px;
+    --radius-sm:  10px;
   }
 
-  main{flex:1;padding:0 18px 110px;}
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-  /* ---------- Hero / journey path ---------- */
-  .hero{padding:6px 0 18px;}
-  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin:0 0 6px;}
-  .hero h1{font-family:var(--display);font-weight:600;font-size:24px;line-height:1.35;margin:0 0 18px;color:var(--text);}
-  .hero h1 span{color:var(--gold);}
-
-  .path-track{position:relative;height:56px;margin:0 2px 16px;}
-  .path-line{position:absolute;top:18px;left:18px;right:18px;height:3px;background:var(--surface-2);border-radius:3px;}
-  .path-fill{position:absolute;top:18px;left:18px;height:3px;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:3px;transition:width .6s ease;}
-  .path-nodes{position:relative;display:flex;justify-content:space-between;align-items:flex-start;}
-  .path-node{
-    width:36px;display:flex;flex-direction:column;align-items:center;gap:6px;
-    background:none;border:none;color:var(--text-muted);font-family:var(--mono);font-size:11px;padding:0;cursor:pointer;
-  }
-  .path-node .dot{
-    width:14px;height:14px;border-radius:50%;background:var(--surface-2);
-    border:2px solid var(--surface-2);
-  }
-  .path-node.done .dot{background:var(--green);border-color:var(--green);}
-  .path-node.current .dot{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 4px var(--gold-soft);}
-  .path-node.current{color:var(--gold);}
-
-  .quote{
-    font-style:italic;font-size:14px;color:var(--text-muted);
-    border-right:2px solid var(--gold);padding-right:12px;margin:0;line-height:1.6;
+  body {
+    background: var(--bg-deep);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
   }
 
-  /* ---------- Cards ---------- */
-  .card{
-    background:var(--surface);border:1px solid var(--line);
-    border-radius:var(--radius);padding:18px;margin-bottom:16px;
-  }
-  .card h2{font-family:var(--display);font-size:17px;font-weight:600;margin:0 0 4px;}
-  .card .sub{font-size:12.5px;color:var(--text-muted);margin:0 0 14px;}
-
-  .tasklist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
-  .task{
-    display:flex;align-items:center;gap:12px;
-    background:var(--surface-2);border:1px solid var(--line);
-    border-radius:12px;padding:10px 12px;cursor:pointer;transition:background .2s,border-color .2s;
-  }
-  .task.checked{background:var(--green-soft);border-color:var(--green);}
-  .task .box{
-    width:22px;height:22px;border-radius:7px;flex:none;
-    border:2px solid var(--text-muted);display:flex;align-items:center;justify-content:center;
-    font-size:13px;color:transparent;transition:all .15s;
-  }
-  .task.checked .box{background:var(--green);border-color:var(--green);color:#10160F;}
-  .task .icon{font-size:18px;flex:none;}
-  .task .info{flex:1;min-width:0;}
-  .task .label{font-weight:600;font-size:14px;}
-  .task .detail{font-size:12px;color:var(--text-muted);margin-top:1px;}
-  .day-status{
-    margin-top:12px;text-align:center;font-family:var(--mono);font-size:12.5px;
-    color:var(--text-muted);
-  }
-  .day-status.complete{color:var(--green);}
-
-  /* ---------- Roadmap accordion ---------- */
-  .roadmap-title{font-family:var(--display);font-size:17px;font-weight:600;margin:6px 0 12px 2px;}
-  .month-card{
-    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-    margin-bottom:10px;overflow:hidden;
-  }
-  .month-head{
-    display:flex;align-items:center;gap:12px;width:100%;background:none;border:none;
-    color:var(--text);padding:14px 16px;cursor:pointer;text-align:right;font-family:var(--body);
-  }
-  .month-num{
-    font-family:var(--mono);font-size:12px;color:var(--gold);background:var(--gold-soft);
-    border-radius:8px;padding:5px 8px;flex:none;
-  }
-  .month-head .mh-text{flex:1;min-width:0;}
-  .month-head .mh-title{font-weight:700;font-size:14.5px;}
-  .month-head .mh-range{font-size:11.5px;color:var(--text-muted);font-family:var(--mono);margin-top:2px;}
-  .month-head .chevron{flex:none;color:var(--text-muted);transition:transform .25s;font-size:13px;}
-  .month-card.open .chevron{transform:rotate(180deg);}
-  .month-body{max-height:0;overflow:hidden;transition:max-height .3s ease;}
-  .month-body-inner{padding:0 16px 16px;}
-  .month-body ul{margin:0 0 10px;padding-right:18px;display:flex;flex-direction:column;gap:6px;}
-  .month-body li{font-size:13.5px;line-height:1.55;}
-  .milestone{
-    font-size:12.5px;background:var(--gold-soft);color:var(--gold);
-    border-radius:10px;padding:8px 10px;line-height:1.5;
+  /* ── COIN RAIN CANVAS ── */
+  #coinCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.35;
   }
 
-  /* ---------- Skills view ---------- */
-  .skill-tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 0 16px;scrollbar-width:none;}
-  .skill-tabs::-webkit-scrollbar{display:none;}
-  .skill-tab{
-    flex:none;display:flex;align-items:center;gap:6px;
-    background:var(--surface);border:1px solid var(--line);color:var(--text-muted);
-    border-radius:999px;padding:9px 14px;font-size:13px;font-family:var(--body);font-weight:600;cursor:pointer;
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 430px;
+    margin: 0 auto;
+    padding: 0 16px 100px;
   }
-  .skill-tab.active{background:var(--gold-soft);border-color:var(--gold);color:var(--gold);}
 
-  .skill-panel .panel-title{font-family:var(--display);font-size:18px;font-weight:600;margin:0 0 4px;}
-  .skill-panel .panel-sub{font-size:13px;color:var(--text-muted);margin:0 0 16px;line-height:1.6;}
-  .tip-list{list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:10px;}
-  .tip-list li{
-    display:flex;gap:10px;font-size:13.5px;line-height:1.6;background:var(--surface);
-    border:1px solid var(--line);border-radius:12px;padding:11px 13px;
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0 12px;
   }
-  .tip-list li .num{font-family:var(--mono);color:var(--gold);flex:none;}
-  .res-title{font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);margin:0 0 10px;}
-  .res-list{display:flex;flex-direction:column;gap:8px;}
-  .res-link{
-    display:flex;align-items:center;justify-content:space-between;
-    background:var(--surface);border:1px solid var(--line);border-radius:12px;
-    padding:12px 14px;color:var(--text);text-decoration:none;font-size:13.5px;font-weight:600;
-  }
-  .res-link .arrow{color:var(--gold);font-family:var(--mono);}
 
-  /* ---------- Views ---------- */
-  .view{display:none;}
-  .view.active{display:block;}
-
-  /* ---------- Bottom nav ---------- */
-  .bottomnav{
-    position:fixed;bottom:0;left:0;right:0;
-    max-width:480px;margin:0 auto;
-    display:flex;background:var(--surface);border-top:1px solid var(--line);
-    padding:10px 18px calc(10px + env(safe-area-inset-bottom));
-    gap:8px;z-index:30;
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  .nav-btn{
-    flex:1;background:none;border:none;color:var(--text-muted);
-    display:flex;flex-direction:column;align-items:center;gap:4px;
-    font-family:var(--body);font-size:11.5px;font-weight:600;padding:6px 0;border-radius:12px;cursor:pointer;
-  }
-  .nav-btn .nicon{font-size:18px;}
-  .nav-btn.active{color:var(--gold);background:var(--gold-soft);}
 
-  .reset-row{text-align:center;padding:6px 0 4px;}
-  .reset-link{font-size:11.5px;color:var(--text-muted);background:none;border:none;text-decoration:underline;font-family:var(--body);cursor:pointer;}
-
-  @media (prefers-reduced-motion: reduce){
-    *{transition:none !important;}
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--gold), #FF9500);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 14px rgba(255,215,0,0.4);
   }
+
+  .logo-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--white);
+    letter-spacing: -0.3px;
+  }
+
+  .logo-text span { color: var(--gold); }
+
+  .user-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-card);
+    border: 1px solid rgba(255,215,0,0.15);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .user-badge .dot {
+    width: 7px; height: 7px;
+    background: var(--success);
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:0.5; transform:scale(0.7); }
+  }
+
+  /* ── HERO BALANCE CARD ── */
+  .balance-card {
+    background: linear-gradient(145deg, #141D2E 0%, #0D1525 100%);
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius: 24px;
+    padding: 28px 24px 24px;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .balance-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    background: radial-gradient(circle, rgba(255,215,0,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .balance-card::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: -20px;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .balance-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .balance-amount {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1;
+    letter-spacing: -1px;
+    text-shadow: 0 0 30px rgba(255,215,0,0.35);
+  }
+
+  .balance-amount .currency {
+    font-size: 20px;
+    font-weight: 600;
+    vertical-align: super;
+    margin-right: 3px;
+    color: var(--gold-dim);
+  }
+
+  .balance-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .balance-sub .change {
+    color: var(--success);
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  .balance-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .stat-pill {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+
+  .stat-pill .s-label {
+    font-size: 10px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+
+  .stat-pill .s-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .stat-pill .s-val.gold { color: var(--gold); }
+  .stat-pill .s-val.cyan { color: var(--cyan); }
+
+  /* ── WATCH AD BUTTON ── */
+  .watch-btn-wrap {
+    margin: 20px 0 6px;
+    position: relative;
+  }
+
+  .watch-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #FFD700 0%, #FF9500 100%);
+    border: none;
+    border-radius: var(--radius);
+    padding: 18px 24px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: #0A0E1A;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    letter-spacing: -0.2px;
+    box-shadow: 0 8px 30px rgba(255,165,0,0.35), 0 2px 8px rgba(0,0,0,0.3);
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .watch-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    animation: shimmer 2.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 200%; }
+  }
+
+  .watch-btn:active { transform: scale(0.97); box-shadow: 0 4px 15px rgba(255,165,0,0.25); }
+
+  .watch-btn .earn-badge {
+    background: rgba(0,0,0,0.18);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .watch-info {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 28px 0 12px;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .step-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: border-color 0.2s;
+  }
+
+  .step-card:hover { border-color: rgba(255,215,0,0.2); }
+
+  .step-num {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .step-num.s1 { background: var(--gold-glow); color: var(--gold); }
+  .step-num.s2 { background: rgba(0,229,255,0.1); color: var(--cyan); }
+  .step-num.s3 { background: rgba(34,212,122,0.1); color: var(--success); }
+
+  .step-text .st { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+  .step-text .sd { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── EARNINGS BREAKDOWN ── */
+  .breakdown-card {
+    background: var(--bg-card2);
+    border: 1px solid rgba(0,229,255,0.15);
+    border-radius: var(--radius);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .breakdown-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan), transparent);
+  }
+
+  .breakdown-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .breakdown-title .icon { color: var(--cyan); }
+
+  .breakdown-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .breakdown-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .breakdown-row:first-of-type { padding-top: 0; }
+
+  .br-left { display: flex; align-items: center; gap: 10px; }
+
+  .br-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .br-label { font-size: 13px; color: var(--muted); }
+  .br-pct { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; }
+  .br-pct.gold { color: var(--gold); }
+  .br-pct.cyan { color: var(--cyan); }
+
+  /* ── PROGRESS BAR ── */
+  .progress-section {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 18px;
+  }
+
+  .prog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .prog-title { font-size: 14px; font-weight: 600; }
+  .prog-count { font-size: 12px; color: var(--muted); }
+  .prog-count span { color: var(--gold); font-weight: 700; }
+
+  .prog-bar {
+    background: rgba(255,255,255,0.07);
+    border-radius: 100px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .prog-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), #FF9500);
+    border-radius: 100px;
+    width: 0%;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 0 8px rgba(255,165,0,0.5);
+  }
+
+  .prog-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .prog-labels span { color: var(--success); font-weight: 600; }
+
+  /* ── RECENT EARNINGS ── */
+  .earning-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .earning-item {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: fadeIn 0.4s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(8px); }
+  }
+
+  .ei-left { display: flex; align-items: center; gap: 10px; }
+
+  .ei-icon {
+    width: 32px; height: 32px;
+    background: var(--gold-glow);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+  }
+
+  .ei-info .ei-title { font-size: 13px; font-weight: 500; }
+  .ei-info .ei-time { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .ei-amount { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: var(--success); }
+
+  /* ── WITHDRAW BUTTON ── */
+  .withdraw-btn {
+    width: 100%;
+    background: transparent;
+    border: 1.5px solid rgba(255,215,0,0.4);
+    border-radius: var(--radius);
+    padding: 15px 24px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gold);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+
+  .withdraw-btn:active {
+    background: var(--gold-glow);
+    transform: scale(0.98);
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1C2A1A;
+    border: 1px solid rgba(34,212,122,0.3);
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 100;
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(10,14,26,0.92);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255,255,255,0.07);
+    display: flex;
+    padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+    z-index: 50;
+  }
+
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 0;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .nav-item .nav-icon { font-size: 20px; }
+  .nav-item .nav-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.3px; }
+  .nav-item.active .nav-label { color: var(--gold); }
+  .nav-item.active .nav-icon { filter: drop-shadow(0 0 6px rgba(255,215,0,0.6)); }
+
+  /* ── LOADING SPINNER ── */
+  .spinner {
+    display: inline-block;
+    width: 20px; height: 20px;
+    border: 2px solid rgba(10,14,26,0.3);
+    border-top-color: rgba(10,14,26,0.9);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── AD OVERLAY ── */
+  .ad-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ad-overlay.show { display: flex; }
+
+  .ad-box {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius: 20px;
+    padding: 28px 24px;
+    max-width: 320px;
+    width: 90%;
+    text-align: center;
+  }
+
+  .ad-coin { font-size: 52px; animation: bounce 0.8s infinite alternate; }
+  @keyframes bounce { to { transform: translateY(-8px); } }
+
+  .ad-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--gold);
+    margin: 12px 0 6px;
+  }
+
+  .ad-sub { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  .ad-progress-bar {
+    background: rgba(255,255,255,0.08);
+    border-radius: 100px;
+    height: 6px;
+    margin: 16px 0 8px;
+    overflow: hidden;
+  }
+
+  .ad-prog-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), #FF9500);
+    border-radius: 100px;
+    width: 0%;
+    transition: width 0.2s linear;
+  }
+
+  .ad-timer { font-size: 12px; color: var(--muted); }
+  .ad-timer span { color: var(--gold); font-weight: 700; }
+
 </style>
 </head>
 <body>
-<div id="app">
 
-  <div class="topbar">
-    <div class="brand"><span class="brand-mark">☕</span><span class="brand-name">6 ወር ጉዞ</span></div>
-    <div class="chip" id="dayChip">ቀን 1/180</div>
+<canvas id="coinCanvas"></canvas>
+
+<div class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">💰</div>
+      <div class="logo-text">Ads<span>2</span>Earn</div>
+    </div>
+    <div class="user-badge">
+      <div class="dot"></div>
+      <span id="username">Loading...</span>
+    </div>
   </div>
 
-  <main>
+  <!-- BALANCE CARD -->
+  <div class="balance-card">
+    <div class="balance-label">Total Earned</div>
+    <div class="balance-amount">
+      <span class="currency">$</span><span id="totalBalance">0.00</span>
+    </div>
+    <div class="balance-sub">
+      <span class="change" id="todayEarned">+$0.00 today</span>
+      <span>•</span>
+      <span>Updated just now</span>
+    </div>
+    <div class="balance-stats">
+      <div class="stat-pill">
+        <div class="s-label">Ads Watched</div>
+        <div class="s-val gold" id="adsWatched">0</div>
+      </div>
+      <div class="stat-pill">
+        <div class="s-label">Per Ad</div>
+        <div class="s-val cyan">~$0.005</div>
+      </div>
+    </div>
+  </div>
 
-    <!-- ============ HOME VIEW ============ -->
-    <section class="view active" id="view-home">
-      <div class="hero">
-        <p class="eyebrow">English in 6 months</p>
-        <h1>እንግሊዝኛህን <span>በየቀኑ</span> ትንሽ ትንሽ እየገነባህ ነው።</h1>
+  <!-- WATCH AD BUTTON -->
+  <div class="watch-btn-wrap">
+    <button class="watch-btn" id="watchBtn" onclick="watchAd()">
+      <span>▶</span>
+      <span>Watch Ad & Earn</span>
+      <span class="earn-badge">+$0.005</span>
+    </button>
+  </div>
+  <div class="watch-info">Each ad earns you 50% of AdGram revenue • Instant credit</div>
 
-        <div class="path-track">
-          <div class="path-line"></div>
-          <div class="path-fill" id="pathFill" style="width:0%"></div>
-          <div class="path-nodes" id="pathNodes"></div>
+  <!-- HOW IT WORKS -->
+  <div class="section-title">How it works</div>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num s1">1</div>
+      <div class="step-text">
+        <div class="st">Watch Short Ads</div>
+        <div class="sd">Tap the button above and watch a short ad served by AdGram</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num s2">2</div>
+      <div class="step-text">
+        <div class="st">Earn Real Money</div>
+        <div class="sd">AdGram pays us and we share 50% of every ad's revenue with you</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num s3">3</div>
+      <div class="step-text">
+        <div class="st">Withdraw Instantly</div>
+        <div class="sd">Cash out your earnings to TON wallet once you reach $1.00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EARNINGS SPLIT -->
+  <div class="section-title">Earnings Breakdown</div>
+  <div class="breakdown-card">
+    <div class="breakdown-title"><span class="icon">⚡</span> Revenue Split Per Ad</div>
+    <div class="breakdown-row">
+      <div class="br-left">
+        <div class="br-dot" style="background:#FFD700"></div>
+        <div class="br-label">Your Earnings (You)</div>
+      </div>
+      <div class="br-pct gold">50%</div>
+    </div>
+    <div class="breakdown-row">
+      <div class="br-left">
+        <div class="br-dot" style="background:#00E5FF"></div>
+        <div class="br-label">Platform Fee</div>
+      </div>
+      <div class="br-pct cyan">50%</div>
+    </div>
+    <div class="breakdown-row">
+      <div class="br-left">
+        <div class="br-dot" style="background:#22D47A"></div>
+        <div class="br-label">Powered by AdGram</div>
+      </div>
+      <div class="br-pct" style="color:var(--success)">✓ Verified</div>
+    </div>
+  </div>
+
+  <!-- DAILY PROGRESS -->
+  <div class="section-title">Daily Goal</div>
+  <div class="progress-section">
+    <div class="prog-header">
+      <div class="prog-title">Daily Ads</div>
+      <div class="prog-count"><span id="adsCount">0</span> / 20 ads</div>
+    </div>
+    <div class="prog-bar">
+      <div class="prog-fill" id="progFill"></div>
+    </div>
+    <div class="prog-labels">
+      <span>0</span>
+      <span>Complete all 20 → earn <span>+$0.10</span> bonus</span>
+    </div>
+  </div>
+
+  <!-- RECENT EARNINGS -->
+  <div class="section-title">Recent Earnings</div>
+  <div class="earning-list" id="earningList">
+    <div class="earning-item" style="animation-delay:0.1s">
+      <div class="ei-left">
+        <div class="ei-icon">📺</div>
+        <div class="ei-info">
+          <div class="ei-title">Ad Reward</div>
+          <div class="ei-time">Waiting for your first ad...</div>
         </div>
-
-        <p class="quote" id="quoteText"></p>
       </div>
+      <div class="ei-amount">$0.00</div>
+    </div>
+  </div>
 
-      <div class="card">
-        <h2>የዛሬ ስራ</h2>
-        <p class="sub">5ቱንም ስታጠናቅቅ ቀንህ ይሟላል እና streak ይጨምራል።</p>
-        <ul class="tasklist" id="taskList"></ul>
-        <p class="day-status" id="dayStatus"></p>
-      </div>
+  <!-- WITHDRAW -->
+  <div class="section-title">Withdraw</div>
+  <button class="withdraw-btn" onclick="withdraw()">
+    💳 Withdraw to TON Wallet
+  </button>
+  <div style="height:16px"></div>
+</div>
 
-      <h2 class="roadmap-title">የ6 ወር ፕላን</h2>
-      <div id="roadmap"></div>
+<!-- AD OVERLAY -->
+<div class="ad-overlay" id="adOverlay">
+  <div class="ad-box">
+    <div class="ad-coin">🎬</div>
+    <div class="ad-title">Ad Playing...</div>
+    <div class="ad-sub">Watch the full ad to receive your reward. Don't close this screen!</div>
+    <div class="ad-progress-bar">
+      <div class="ad-prog-fill" id="adProgFill"></div>
+    </div>
+    <div class="ad-timer">Completing in <span id="adCountdown">5</span>s</div>
+  </div>
+</div>
 
-      <div class="reset-row">
-        <button class="reset-link" id="resetBtn">እድገትን ዳግም ጀምር</button>
-      </div>
-    </section>
+<!-- TOAST -->
+<div class="toast" id="toast">✅ +$0.005 earned!</div>
 
-    <!-- ============ SKILLS VIEW ============ -->
-    <section class="view" id="view-skills">
-      <div class="skill-tabs" id="skillTabs"></div>
-      <div class="skill-panel" id="skillPanel"></div>
-    </section>
-
-  </main>
-
-  <nav class="bottomnav">
-    <button class="nav-btn active" data-view="home"><span class="nicon">🗺️</span>ጉዞ</button>
-    <button class="nav-btn" data-view="skills"><span class="nicon">🎯</span>ክህሎቶች</button>
-  </nav>
-
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-item active">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-label">Home</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">📊</div>
+    <div class="nav-label">Stats</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">👥</div>
+    <div class="nav-label">Refer</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">💳</div>
+    <div class="nav-label">Wallet</div>
+  </div>
 </div>
 
 <script>
-(function(){
-  "use strict";
+// ── TELEGRAM INIT ──
+const tg = window.Telegram?.WebApp;
+if (tg) {
+  tg.ready();
+  tg.expand();
+  const user = tg.initDataUnsafe?.user;
+  document.getElementById('username').textContent = user?.first_name || 'User';
+} else {
+  document.getElementById('username').textContent = 'Demo User';
+}
 
-  var tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
-  var memoryStore = {};
+// ── STATE ──
+let state = {
+  balance: parseFloat(localStorage.getItem('balance') || '0'),
+  adsWatched: parseInt(localStorage.getItem('adsWatched') || '0'),
+  todayEarned: parseFloat(localStorage.getItem('todayEarned') || '0'),
+  earnings: JSON.parse(localStorage.getItem('earnings') || '[]'),
+  isWatching: false
+};
 
-  if(tg){
-    try{ tg.ready(); tg.expand(); }catch(e){}
-    try{ tg.setHeaderColor && tg.setHeaderColor('#1B130F'); }catch(e){}
-    try{ tg.setBackgroundColor && tg.setBackgroundColor('#1B130F'); }catch(e){}
+const PER_AD = 0.005;
+
+function save() {
+  localStorage.setItem('balance', state.balance.toFixed(4));
+  localStorage.setItem('adsWatched', state.adsWatched);
+  localStorage.setItem('todayEarned', state.todayEarned.toFixed(4));
+  localStorage.setItem('earnings', JSON.stringify(state.earnings.slice(0,20)));
+}
+
+function updateUI() {
+  document.getElementById('totalBalance').textContent = state.balance.toFixed(3);
+  document.getElementById('adsWatched').textContent = state.adsWatched;
+  document.getElementById('todayEarned').textContent = '+$' + state.todayEarned.toFixed(3) + ' today';
+  document.getElementById('adsCount').textContent = Math.min(state.adsWatched % 20, 20);
+
+  const pct = Math.min((state.adsWatched % 20) / 20 * 100, 100);
+  setTimeout(() => {
+    document.getElementById('progFill').style.width = pct + '%';
+  }, 400);
+
+  renderEarnings();
+}
+
+function renderEarnings() {
+  const list = document.getElementById('earningList');
+  if (state.earnings.length === 0) {
+    list.innerHTML = `
+      <div class="earning-item" style="animation-delay:0.1s">
+        <div class="ei-left">
+          <div class="ei-icon">📺</div>
+          <div class="ei-info">
+            <div class="ei-title">Ad Reward</div>
+            <div class="ei-time">Waiting for your first ad...</div>
+          </div>
+        </div>
+        <div class="ei-amount">$0.00</div>
+      </div>`;
+    return;
   }
+  list.innerHTML = state.earnings.slice(0,5).map((e, i) => `
+    <div class="earning-item" style="animation-delay:${i*0.07}s">
+      <div class="ei-left">
+        <div class="ei-icon">📺</div>
+        <div class="ei-info">
+          <div class="ei-title">Ad Reward</div>
+          <div class="ei-time">${e.time}</div>
+        </div>
+      </div>
+      <div class="ei-amount">+$${e.amount.toFixed(4)}</div>
+    </div>`).join('');
+}
 
-  function csGet(key){
-    return new Promise(function(resolve){
-      if(tg && tg.CloudStorage){
-        tg.CloudStorage.getItem(key, function(err, value){ resolve(err ? null : value); });
-      } else {
-        resolve(memoryStore[key] || null);
-      }
-    });
-  }
-  function csSet(key, value){
-    return new Promise(function(resolve){
-      if(tg && tg.CloudStorage){
-        tg.CloudStorage.setItem(key, value, function(err, ok){ resolve(!err); });
-      } else {
-        memoryStore[key] = value; resolve(true);
-      }
-    });
-  }
-  function haptic(){ if(tg && tg.HapticFeedback){ try{ tg.HapticFeedback.impactOccurred('light'); }catch(e){} } }
-  function openLink(url){ if(tg && tg.openLink){ try{ tg.openLink(url); return; }catch(e){} } window.open(url,'_blank'); }
-  function confirmDialog(msg, cb){
-    if(tg && tg.showConfirm){ try{ tg.showConfirm(msg, cb); return; }catch(e){} }
-    cb(window.confirm(msg));
-  }
+// ── WATCH AD ──
+function watchAd() {
+  if (state.isWatching) return;
+  state.isWatching = true;
 
-  function pad(n){ return n<10 ? '0'+n : ''+n; }
-  function toDateKey(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
-  function dateFromKey(k){ var p=k.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+  const btn = document.getElementById('watchBtn');
+  btn.innerHTML = '<div class="spinner"></div><span>Loading Ad...</span>';
+  btn.disabled = true;
 
-  var TASKS = [
-    {id:'listen', label:'ማዳመጥ', detail:'20-30 ደቂቃ የእንግሊዝኛ ድምጽ ስማ', icon:'🎧'},
-    {id:'speak',  label:'መናገር', detail:'10-15 ደቂቃ ጮክ ብለህ ተናገር', icon:'🗣️'},
-    {id:'read',   label:'ማንበብ', detail:'15-20 ደቂቃ ቀላል ጽሑፍ አንብብ', icon:'📖'},
-    {id:'write',  label:'መጻፍ', detail:'5-10 ዓረፍተ ነገሮች ጻፍ', icon:'✍️'},
-    {id:'vocab',  label:'ቃላት/ሰዋስው', detail:'15 ደቂቃ አዳዲስ ቃላት ተማር', icon:'🧩'}
-  ];
+  // Here you integrate AdGram SDK:
+  // window.AdController?.show() or similar AdGram call
+  // For demo: simulate ad flow
+  setTimeout(() => showAdOverlay(), 800);
+}
 
-  var QUOTES = [
-    "ቋንቋ የሚገነባው በቀን ተቀን ልምምድ ነው እንጂ በአንዴ አይደለም።",
-    "ስህተት መስራት የመማር አካል ነው እንጂ እንቅፋት አይደለም።",
-    "ትንሽ በተከታታይ ይበልጣል ትልቅ በአንዴ ከማድረግ።",
-    "በራስህ ፍጥነት ሂድ ግን አታቁም።",
-    "እያንዳንዱ ቃል የምትለማው ወደ ግብህ የሚያቀርብህ ድልድይ ነው።",
-    "ዛሬ የተወው ትንሽ ልምምድ ነገ የሚታይ ለውጥ ይፈጥራል።"
-  ];
+function showAdOverlay() {
+  const overlay = document.getElementById('adOverlay');
+  overlay.classList.add('show');
+  let t = 5;
+  document.getElementById('adCountdown').textContent = t;
+  document.getElementById('adProgFill').style.width = '0%';
 
-  var MONTHS = [
-    {n:1, title:'መሰረት', range:'ቀን 1–30',
-      focus:[
-        'መሰረታዊ ድምፆችን (pronunciation) እና አጠራርን ተለማመድ',
-        '1000 መሰረታዊ ቃላት እና ቀላል ዓረፍተ ነገሮችን ተማር',
-        'Simple Present Tense ላይ አተኩር',
-        'በቀን 20 ደቂቃ ለጀማሪ የተደረገ ድምጽ አድምጥ'
-      ],
-      milestone:'ግብ፦ ራስህን በቀላል ዓረፍተ ነገር ማስተዋወቅ መቻል።'},
-    {n:2, title:'ግንባታ', range:'ቀን 31–60',
-      focus:[
-        'Past እና Future Tense ተማር',
-        'የቀን ተቀን መነጋገሪያ ሐረጎችን (everyday phrases) ለማድ',
-        'በቀን ቢያንስ 3 ዓረፍተ ነገር ዳይሪ ጻፍ',
-        'ለጀማሪ የተደረጉ ፖድካስቶችን ለ30 ደቂቃ አድምጥ'
-      ],
-      milestone:'ግብ፦ ስለ ቀንህ እና እቅድህ በቀላል እንግሊዝኛ መንገር መቻል።'},
-    {n:3, title:'መለማመድ', range:'ቀን 61–90',
-      focus:[
-        'ከቋንቋ ጓደኛ (language partner) ጋር መነጋገር ጀምር',
-        'ፊልም/ሲሪዝ በእንግሊዝኛ ሰብ-ታይትል መከታተል',
-        'ቀላል ታሪኮችን (graded readers) level 1 አንብብ',
-        'ቃላት ዝርዝርህን ወደ 2000 አሳድግ'
-      ],
-      milestone:'ግብ፦ ለ5 ደቂቃ ያለማቋረጥ በእንግሊዝኛ መነጋገር መቻል።'},
-    {n:4, title:'ጥልቀት', range:'ቀን 91–120',
-      focus:[
-        'Conditionals እና Perfect Tense ተማር',
-        'በተፈጥሮ ፍጥነት (native speed) የሚነገሩ ፖድካስቶችን አድምጥ',
-        'አጫጭር ድርሰቶችን (paragraphs) መጻፍ ጀምር',
-        'አጫጭር ዜናዎችን እና ጽሑፎችን አንብብ'
-      ],
-      milestone:'ግብ፦ የራስህን አስተያየት በ3-4 ዓረፍተ ነገር ማስፈር መቻል።'},
-    {n:5, title:'ፍሰት', range:'ቀን 121–150',
-      focus:[
-        'በሳምንት ቢያንስ 3 ጊዜ ትክክለኛ ንግግር (real conversation) አድርግ',
-        'ፊልም ያለ ሰብ-ታይትል ለመከታተል ሞክር',
-        'ድርሰት (essay) ለመጻፍ ሞክር',
-        'ዜናዎችን በመደበኛነት አንብብ'
-      ],
-      milestone:'ግብ፦ ያልተዘጋጁ ርዕሶችን ለ2-3 ደቂቃ መናገር መቻል።'},
-    {n:6, title:'ብስለት', range:'ቀን 151–180',
-      focus:[
-        'ሙሉ ቀን (one full day) በእንግሊዝኛ ብቻ ለማሳለፍ ሞክር',
-        'አንድ ቀላል ልብወለድ (novel) ማንበብ ጀምር',
-        'የፊት ለፊት ንግግር (mock conversation) ለማድ',
-        'የተማርከውን ሁሉ መርምር እና ድክመትህን አጠናክር'
-      ],
-      milestone:'ግብ፦ በራስ መተማመን ስለ ራስህ፣ ስራህ እና አስተያየትህ መግለጽ መቻል።'}
-  ];
-
-  var SKILLS = {
-    listen:{icon:'🎧', title:'ማዳመጥ', sub:'ጆሮህን ለእንግሊዝኛ ድምጽ፣ ፍጥነት እና ዜማ ማላመድ ነው ግቡ።',
-      tips:[
-        'በቀን 20-60 ደቂቃ አድምጥ፤ ቀስ በቀስ ፍጥነቱን ጨምር',
-        'መጀመሪያ ለጀማሪ የተደረጉ ይዘቶችን ምረጥ',
-        'የምትሰማውን ቃላት ጮክ ብለህ ድገም (shadowing ይባላል)'
-      ],
-      resources:[
-        {name:'BBC Learning English', url:'https://www.bbc.co.uk/learningenglish'},
-        {name:'VOA Learning English', url:'https://learningenglish.voanews.com'},
-        {name:'English with Lucy — YouTube', url:'https://www.youtube.com/@EnglishwithLucy'}
-      ]},
-    speak:{icon:'🗣️', title:'መናገር', sub:'መነጋገር በመነጋገር ይማማራል — ስህተት መስራትን ፍራ።',
-      tips:[
-        'በመስታወት ፊት ብቻህን ስለ ቀንህ ተናገር',
-        'ከጓደኛ ጋር በሳምንት 2-3 ጊዜ በእንግሊዝኛ ተግባባ',
-        'ስህተት ስለሰራህ አትፍራ — መነጋገር ራሱ ልምምድ ነው'
-      ],
-      resources:[
-        {name:'HelloTalk', url:'https://www.hellotalk.com'},
-        {name:'Tandem', url:'https://www.tandem.net'}
-      ]},
-    read:{icon:'📖', title:'ማንበብ', sub:'ቃላትን በዐውድ (context) ውስጥ ማየት ትዝታህ ላይ ይቀርጻል።',
-      tips:[
-        'በደረጅህ ደረጃ ቀላል ታሪኮችን (graded readers) አንብብ',
-        'በቀላል ደረጄ የተደረጉ ዜናዎችን ተጠቀም',
-        'የማታውቀውን ቃል ስትገናኝ ገምተህ ቀጥል፣ አትቆም'
-      ],
-      resources:[
-        {name:'News in Levels', url:'https://www.newsinlevels.com'}
-      ]},
-    write:{icon:'✍️', title:'መጻፍ', sub:'መጻፍ ያሰብከውን አደራጅተህ የምታስፈር ጊዜ ነው።',
-      tips:[
-        'በቀን ትንሽ diary ጻፍ — ስህተት ቢኖርበት ችግር የለውም',
-        'የተማርካቸውን አዳዲስ ቃላት በዓረፍተ ነገር ተጠቀም',
-        'የጻፍከውን ድጋሚ አርም (Grammarly ወይም AI መጠቀም ትችላለህ)'
-      ],
-      resources:[
-        {name:'Grammarly', url:'https://www.grammarly.com'}
-      ]},
-    vocab:{icon:'🧩', title:'ቃላት/ሰዋስው', sub:'ቃላት እና ሰዋስው የቤቱ ግድግዳና መሰረት ናቸው።',
-      tips:[
-        'በቀን 15-20 ደቂቃ flashcard (Anki/Duolingo) ተጠቀም',
-        'አንድ የሰዋስው መጽሐፍ (e.g. English Grammar in Use) ይዘህ ቀስ በቀስ ስራ',
-        'አዳዲስ ቃላትን በራስህ ዓረፍተ ነገር ውስጥ ተጠቅመህ አስታውስ'
-      ],
-      resources:[
-        {name:'Duolingo', url:'https://www.duolingo.com'}
-      ]}
-  };
-
-  var state = { startDate:null, progress:{} };
-  var openMonth = null;
-  var activeSkill = 'listen';
-
-  function dayNumber(){
-    var start = dateFromKey(state.startDate);
-    var today = dateFromKey(toDateKey(new Date()));
-    var diff = Math.round((today - start) / 86400000) + 1;
-    return Math.min(180, Math.max(1, diff));
-  }
-
-  function isDayComplete(key){
-    var arr = state.progress[key];
-    return !!arr && arr.length >= TASKS.length;
-  }
-
-  function computeStreak(){
-    var streak = 0;
-    var d = new Date();
-    var key = toDateKey(d);
-    if(!isDayComplete(key)){ d.setDate(d.getDate()-1); }
-    while(true){
-      key = toDateKey(d);
-      if(isDayComplete(key)){ streak++; d.setDate(d.getDate()-1); } else break;
+  const interval = setInterval(() => {
+    t--;
+    document.getElementById('adCountdown').textContent = t;
+    document.getElementById('adProgFill').style.width = ((5 - t) / 5 * 100) + '%';
+    if (t <= 0) {
+      clearInterval(interval);
+      completeAd();
     }
-    return streak;
+  }, 1000);
+}
+
+function completeAd() {
+  document.getElementById('adOverlay').classList.remove('show');
+  const btn = document.getElementById('watchBtn');
+
+  state.balance += PER_AD;
+  state.adsWatched++;
+  state.todayEarned += PER_AD;
+
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  state.earnings.unshift({ amount: PER_AD, time: timeStr });
+
+  save();
+  updateUI();
+  showToast('+$' + PER_AD.toFixed(4) + ' earned! 🎉');
+
+  // Haptic feedback
+  tg?.HapticFeedback?.notificationOccurred('success');
+
+  state.isWatching = false;
+  btn.innerHTML = '<span>▶</span><span>Watch Ad & Earn</span><span class="earn-badge">+$0.005</span>';
+  btn.disabled = false;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function withdraw() {
+  if (state.balance < 1.0) {
+    showToast('⚠️ Min withdrawal: $1.00');
+    return;
   }
+  // TODO: integrate TON payment
+  showToast('💳 Redirecting to TON wallet...');
+}
 
-  function renderTop(){
-    var dn = dayNumber();
-    var streak = computeStreak();
-    document.getElementById('dayChip').textContent =
-      'ቀን ' + dn + '/180' + (streak > 0 ? '  🔥' + streak : '');
-  }
+// ── COIN RAIN ANIMATION ──
+const canvas = document.getElementById('coinCanvas');
+const ctx = canvas.getContext('2d');
 
-  function renderPath(){
-    var dn = dayNumber();
-    var pct = Math.min(100, ((dn - 1) / 179) * 100);
-    document.getElementById('pathFill').style.width = pct + '%';
-    var currentMonth = Math.min(6, Math.ceil(dn / 30));
-    var wrap = document.getElementById('pathNodes');
-    wrap.innerHTML = '';
-    MONTHS.forEach(function(m){
-      var btn = document.createElement('button');
-      btn.className = 'path-node' + (m.n < currentMonth ? ' done' : '') + (m.n === currentMonth ? ' current' : '');
-      btn.innerHTML = '<span class="dot"></span><span>' + m.n + '</span>';
-      btn.addEventListener('click', function(){
-        openMonth = m.n;
-        renderRoadmap();
-        var el = document.getElementById('month-' + m.n);
-        if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
-      });
-      wrap.appendChild(btn);
-    });
-  }
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
 
-  function renderQuote(){
-    var dn = dayNumber();
-    document.getElementById('quoteText').textContent = QUOTES[(dn - 1) % QUOTES.length];
-  }
+const coins = Array.from({length: 18}, () => ({
+  x: Math.random() * window.innerWidth,
+  y: Math.random() * window.innerHeight - window.innerHeight,
+  size: Math.random() * 10 + 8,
+  speed: Math.random() * 0.6 + 0.3,
+  opacity: Math.random() * 0.5 + 0.15,
+  char: ['₿','$','💰','●','◉'][Math.floor(Math.random() * 5)]
+}));
 
-  function renderTasks(){
-    var key = toDateKey(new Date());
-    var done = state.progress[key] || [];
-    var list = document.getElementById('taskList');
-    list.innerHTML = '';
-    TASKS.forEach(function(t){
-      var checked = done.indexOf(t.id) > -1;
-      var li = document.createElement('li');
-      li.className = 'task' + (checked ? ' checked' : '');
-      li.innerHTML =
-        '<span class="box">' + (checked ? '✓' : '') + '</span>' +
-        '<span class="icon">' + t.icon + '</span>' +
-        '<span class="info"><span class="label">' + t.label + '</span>' +
-        '<div class="detail">' + t.detail + '</div></span>';
-      li.addEventListener('click', function(){ toggleTask(t.id); });
-      list.appendChild(li);
-    });
-
-    var status = document.getElementById('dayStatus');
-    if(done.length >= TASKS.length){
-      status.textContent = 'ዛሬ ሙሉ በሙሉ ጨርሰሃል! ☕ ጥሩ ስራ።';
-      status.className = 'day-status complete';
-    } else {
-      status.textContent = done.length + ' / ' + TASKS.length + ' ዛሬ ተጠናቅቋል';
-      status.className = 'day-status';
+function drawCoins() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  coins.forEach(c => {
+    ctx.save();
+    ctx.globalAlpha = c.opacity;
+    ctx.fillStyle = '#FFD700';
+    ctx.font = `${c.size}px Arial`;
+    ctx.fillText(c.char, c.x, c.y);
+    ctx.restore();
+    c.y += c.speed;
+    if (c.y > canvas.height + 20) {
+      c.y = -20;
+      c.x = Math.random() * canvas.width;
     }
-  }
+  });
+  requestAnimationFrame(drawCoins);
+}
+drawCoins();
 
-  function toggleTask(id){
-    var key = toDateKey(new Date());
-    var arr = state.progress[key] ? state.progress[key].slice() : [];
-    var idx = arr.indexOf(id);
-    if(idx > -1) arr.splice(idx, 1); else arr.push(id);
-    state.progress[key] = arr;
-    csSet('progress', JSON.stringify(state.progress));
-    haptic();
-    renderTasks();
-    renderTop();
-    renderPath();
-  }
-
-  function renderRoadmap(){
-    var dn = dayNumber();
-    var currentMonth = Math.min(6, Math.ceil(dn / 30));
-    if(openMonth === null) openMonth = currentMonth;
-    var wrap = document.getElementById('roadmap');
-    wrap.innerHTML = '';
-    MONTHS.forEach(function(m){
-      var card = document.createElement('div');
-      card.className = 'month-card' + (openMonth === m.n ? ' open' : '');
-      card.id = 'month-' + m.n;
-
-      var head = document.createElement('button');
-      head.className = 'month-head';
-      head.innerHTML =
-        '<span class="month-num">0' + m.n + '</span>' +
-        '<span class="mh-text"><div class="mh-title">' + m.title + '</div>' +
-        '<div class="mh-range">' + m.range + (m.n === currentMonth ? ' · አሁን' : '') + '</div></span>' +
-        '<span class="chevron">▾</span>';
-      head.addEventListener('click', function(){
-        openMonth = (openMonth === m.n) ? null : m.n;
-        renderRoadmap();
-      });
-
-      var body = document.createElement('div');
-      body.className = 'month-body';
-      var inner = document.createElement('div');
-      inner.className = 'month-body-inner';
-      var ul = document.createElement('ul');
-      m.focus.forEach(function(f){
-        var li = document.createElement('li');
-        li.textContent = '• ' + f;
-        ul.appendChild(li);
-      });
-      var milestone = document.createElement('div');
-      milestone.className = 'milestone';
-      milestone.textContent = m.milestone;
-      inner.appendChild(ul);
-      inner.appendChild(milestone);
-      body.appendChild(inner);
-
-      card.appendChild(head);
-      card.appendChild(body);
-      wrap.appendChild(card);
-
-      if(openMonth === m.n){
-        requestAnimationFrame(function(){ body.style.maxHeight = body.scrollHeight + 'px'; });
-      } else {
-        body.style.maxHeight = '0px';
-      }
-    });
-  }
-
-  function renderSkillTabs(){
-    var wrap = document.getElementById('skillTabs');
-    wrap.innerHTML = '';
-    Object.keys(SKILLS).forEach(function(key){
-      var s = SKILLS[key];
-      var btn = document.createElement('button');
-      btn.className = 'skill-tab' + (activeSkill === key ? ' active' : '');
-      btn.innerHTML = s.icon + ' ' + s.title;
-      btn.addEventListener('click', function(){
-        activeSkill = key;
-        renderSkillTabs();
-        renderSkillPanel();
-      });
-      wrap.appendChild(btn);
-    });
-  }
-
-  function renderSkillPanel(){
-    var s = SKILLS[activeSkill];
-    var panel = document.getElementById('skillPanel');
-    panel.innerHTML = '';
-
-    var title = document.createElement('h2');
-    title.className = 'panel-title';
-    title.textContent = s.icon + ' ' + s.title;
-    var sub = document.createElement('p');
-    sub.className = 'panel-sub';
-    sub.textContent = s.sub;
-
-    var tipList = document.createElement('ul');
-    tipList.className = 'tip-list';
-    s.tips.forEach(function(tip, i){
-      var li = document.createElement('li');
-      li.innerHTML = '<span class="num">0' + (i + 1) + '</span><span>' + tip + '</span>';
-      tipList.appendChild(li);
-    });
-
-    var resTitle = document.createElement('p');
-    resTitle.className = 'res-title';
-    resTitle.textContent = 'የሚረዱ መሳሪያዎች';
-
-    var resList = document.createElement('div');
-    resList.className = 'res-list';
-    s.resources.forEach(function(r){
-      var a = document.createElement('a');
-      a.className = 'res-link';
-      a.href = '#';
-      a.innerHTML = '<span>' + r.name + '</span><span class="arrow">↗</span>';
-      a.addEventListener('click', function(e){ e.preventDefault(); openLink(r.url); });
-      resList.appendChild(a);
-    });
-
-    panel.appendChild(title);
-    panel.appendChild(sub);
-    panel.appendChild(tipList);
-    panel.appendChild(resTitle);
-    panel.appendChild(resList);
-  }
-
-  function switchView(name){
-    document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-    document.getElementById('view-' + name).classList.add('active');
-    document.querySelectorAll('.nav-btn').forEach(function(b){
-      b.classList.toggle('active', b.getAttribute('data-view') === name);
-    });
-  }
-
-  function bindNav(){
-    document.querySelectorAll('.nav-btn').forEach(function(b){
-      b.addEventListener('click', function(){ switchView(b.getAttribute('data-view')); });
-    });
-  }
-
-  function bindReset(){
-    document.getElementById('resetBtn').addEventListener('click', function(){
-      confirmDialog('እርግጠኛ ነህ? ሁሉም የእድገት መረጃ ይጠፋል እና ከቀን 1 ይጀምራል።', function(ok){
-        if(!ok) return;
-        state.progress = {};
-        state.startDate = toDateKey(new Date());
-        openMonth = null;
-        csSet('progress', JSON.stringify(state.progress));
-        csSet('startDate', state.startDate);
-        renderAll();
-      });
-    });
-  }
-
-  function renderAll(){
-    renderTop();
-    renderPath();
-    renderQuote();
-    renderTasks();
-    renderRoadmap();
-    renderSkillTabs();
-    renderSkillPanel();
-  }
-
-  function init(){
-    csGet('startDate').then(function(sd){
-      if(!sd){
-        sd = toDateKey(new Date());
-        csSet('startDate', sd);
-      }
-      state.startDate = sd;
-      return csGet('progress');
-    }).then(function(pr){
-      try{ state.progress = pr ? JSON.parse(pr) : {}; }catch(e){ state.progress = {}; }
-      bindNav();
-      bindReset();
-      renderAll();
-    });
-  }
-
-  init();
-})();
+// ── INIT ──
+updateUI();
 </script>
 </body>
 </html>
