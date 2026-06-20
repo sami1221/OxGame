@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Ads to Make Money</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<!-- AdsGram SDK (rewarded ads for Telegram Mini Apps) -->
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -19,6 +21,7 @@
     --white:      #F0F4FF;
     --muted:      #7A8499;
     --success:    #22D47A;
+    --danger:     #FF5C5C;
     --radius:     16px;
     --radius-sm:  10px;
   }
@@ -107,6 +110,26 @@
   @keyframes pulse-dot {
     0%,100% { opacity:1; transform:scale(1); }
     50% { opacity:0.5; transform:scale(0.7); }
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; animation: pageIn 0.25s ease; }
+  @keyframes pageIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+  .page-head {
+    margin: 8px 0 18px;
+  }
+  .page-head .pt {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+  .page-head .pd {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 3px;
   }
 
   /* ── HERO BALANCE CARD ── */
@@ -257,6 +280,14 @@
 
   .watch-btn:active { transform: scale(0.97); box-shadow: 0 4px 15px rgba(255,165,0,0.25); }
 
+  .watch-btn:disabled {
+    background: rgba(255,255,255,0.08);
+    color: var(--muted);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  .watch-btn:disabled::before { display: none; }
+
   .watch-btn .earn-badge {
     background: rgba(0,0,0,0.18);
     border-radius: 6px;
@@ -273,7 +304,7 @@
     margin-top: 6px;
   }
 
-  /* ── HOW IT WORKS ── */
+  /* ── SECTION TITLE ── */
   .section-title {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 13px;
@@ -283,97 +314,6 @@
     color: var(--muted);
     margin: 28px 0 12px;
   }
-
-  .steps {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .step-card {
-    background: var(--bg-card);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: var(--radius);
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    transition: border-color 0.2s;
-  }
-
-  .step-card:hover { border-color: rgba(255,215,0,0.2); }
-
-  .step-num {
-    width: 38px; height: 38px;
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 16px;
-    font-weight: 800;
-    flex-shrink: 0;
-  }
-
-  .step-num.s1 { background: var(--gold-glow); color: var(--gold); }
-  .step-num.s2 { background: rgba(0,229,255,0.1); color: var(--cyan); }
-  .step-num.s3 { background: rgba(34,212,122,0.1); color: var(--success); }
-
-  .step-text .st { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
-  .step-text .sd { font-size: 12px; color: var(--muted); line-height: 1.5; }
-
-  /* ── EARNINGS BREAKDOWN ── */
-  .breakdown-card {
-    background: var(--bg-card2);
-    border: 1px solid rgba(0,229,255,0.15);
-    border-radius: var(--radius);
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .breakdown-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--cyan), transparent);
-  }
-
-  .breakdown-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-
-  .breakdown-title .icon { color: var(--cyan); }
-
-  .breakdown-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 11px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-
-  .breakdown-row:last-child { border-bottom: none; padding-bottom: 0; }
-  .breakdown-row:first-of-type { padding-top: 0; }
-
-  .br-left { display: flex; align-items: center; gap: 10px; }
-
-  .br-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  .br-label { font-size: 13px; color: var(--muted); }
-  .br-pct { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; }
-  .br-pct.gold { color: var(--gold); }
-  .br-pct.cyan { color: var(--cyan); }
 
   /* ── PROGRESS BAR ── */
   .progress-section {
@@ -457,18 +397,242 @@
   .ei-info .ei-title { font-size: 13px; font-weight: 500; }
   .ei-info .ei-time { font-size: 11px; color: var(--muted); margin-top: 1px; }
   .ei-amount { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: var(--success); }
+  .ei-amount.neg { color: var(--danger); }
 
-  /* ── WITHDRAW BUTTON ── */
+  /* ── LEADERBOARD ── */
+  .seg-control {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+  .seg-btn {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 9px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .seg-btn.active {
+    background: linear-gradient(135deg, var(--gold), #FF9500);
+    color: #0A0E1A;
+  }
+
+  .you-rank-card {
+    background: linear-gradient(145deg, #1A1408 0%, #141D2E 100%);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .you-rank-card .yr-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .you-rank-card .yr-rank { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; color: var(--gold); }
+  .you-rank-card .yr-ads { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .lb-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .lb-row {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: var(--radius-sm);
+    padding: 11px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeIn 0.35s ease forwards;
+    opacity: 0;
+  }
+  .lb-row.is-you {
+    border-color: rgba(255,215,0,0.35);
+    background: rgba(255,215,0,0.06);
+  }
+  .lb-rank {
+    width: 26px;
+    text-align: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .lb-rank.medal { font-size: 17px; }
+  .lb-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--cyan-dim);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .lb-name { flex: 1; font-size: 13.5px; font-weight: 500; }
+  .lb-name .you-tag { color: var(--gold); font-weight: 700; }
+  .lb-ads { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: var(--white); }
+  .lb-ads small { font-size: 10px; color: var(--muted); font-weight: 500; display:block; text-align:right; }
+
+  /* ── REFER PAGE ── */
+  .refer-hero {
+    background: linear-gradient(145deg, #141D2E 0%, #0D1525 100%);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .refer-hero::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(0,229,255,0.14) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .refer-icon { font-size: 38px; }
+  .refer-hero h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 19px;
+    font-weight: 800;
+    margin: 10px 0 6px;
+  }
+  .refer-hero p { font-size: 12.5px; color: var(--muted); line-height: 1.6; max-width: 280px; margin: 0 auto; }
+  .refer-hero p b { color: var(--cyan); }
+
+  .refer-link-box {
+    margin-top: 18px;
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 14px;
+  }
+
+  .link-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 11px 12px;
+  }
+  .link-row .lr-text {
+    flex: 1;
+    font-size: 12px;
+    color: var(--white);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .copy-btn {
+    background: var(--gold-glow);
+    border: none;
+    border-radius: 7px;
+    padding: 7px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .share-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: linear-gradient(135deg, #00E5FF, #00A3C4);
+    border: none;
+    border-radius: 12px;
+    padding: 13px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #0A0E1A;
+    cursor: pointer;
+  }
+  .share-btn:active { transform: scale(0.98); }
+
+  .refer-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .demo-btn {
+    width: 100%;
+    margin-top: 16px;
+    background: transparent;
+    border: 1.5px dashed rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  /* ── WALLET PAGE ── */
+  .wallet-hero {
+    text-align: center;
+    padding: 10px 0 6px;
+  }
+  .wallet-hero .wh-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+  .wallet-hero .wh-amount {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 46px;
+    font-weight: 800;
+    color: var(--gold);
+    text-shadow: 0 0 30px rgba(255,215,0,0.35);
+    margin: 4px 0;
+  }
+  .wallet-hero .wh-amount .currency { font-size: 22px; vertical-align: super; color: var(--gold-dim); }
+
+  .min-progress { margin-top: 14px; }
+  .min-progress .mp-row { display:flex; justify-content:space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .min-progress .mp-row span { color: var(--cyan); font-weight: 600; }
+
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 18px 0 8px;
+  }
+
+  .wallet-input {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 13.5px;
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+  }
+  .wallet-input:focus { outline: none; border-color: rgba(255,215,0,0.4); }
+  .wallet-input::placeholder { color: var(--muted); }
+
   .withdraw-btn {
     width: 100%;
-    background: transparent;
-    border: 1.5px solid rgba(255,215,0,0.4);
+    margin-top: 14px;
+    background: linear-gradient(135deg, #FFD700 0%, #FF9500 100%);
+    border: none;
     border-radius: var(--radius);
-    padding: 15px 24px;
+    padding: 16px 24px;
     font-family: 'Space Grotesk', sans-serif;
     font-size: 15px;
-    font-weight: 600;
-    color: var(--gold);
+    font-weight: 700;
+    color: #0A0E1A;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -476,10 +640,20 @@
     gap: 8px;
     transition: all 0.2s;
   }
+  .withdraw-btn:disabled {
+    background: rgba(255,255,255,0.08);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+  .withdraw-btn:active:not(:disabled) { transform: scale(0.98); }
 
-  .withdraw-btn:active {
-    background: var(--gold-glow);
-    transform: scale(0.98);
+  .wallet-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; }
+
+  .history-empty {
+    text-align: center;
+    padding: 22px 0;
+    color: var(--muted);
+    font-size: 12.5px;
   }
 
   /* ── TOAST ── */
@@ -502,6 +676,7 @@
     transition: all 0.3s;
     z-index: 100;
     white-space: nowrap;
+    max-width: 90%;
   }
 
   .toast.show {
@@ -530,6 +705,8 @@
     padding: 6px 0;
     cursor: pointer;
     transition: all 0.2s;
+    border: none;
+    background: transparent;
   }
 
   .nav-item .nav-icon { font-size: 20px; }
@@ -626,129 +803,152 @@
     </div>
   </div>
 
-  <!-- BALANCE CARD -->
-  <div class="balance-card">
-    <div class="balance-label">Total Earned</div>
-    <div class="balance-amount">
-      <span class="currency">$</span><span id="totalBalance">0.00</span>
-    </div>
-    <div class="balance-sub">
-      <span class="change" id="todayEarned">+$0.00 today</span>
-      <span>•</span>
-      <span>Updated just now</span>
-    </div>
-    <div class="balance-stats">
-      <div class="stat-pill">
-        <div class="s-label">Ads Watched</div>
-        <div class="s-val gold" id="adsWatched">0</div>
-      </div>
-      <div class="stat-pill">
-        <div class="s-label">Per Ad</div>
-        <div class="s-val cyan">~$0.005</div>
-      </div>
-    </div>
-  </div>
+  <!-- ══════════ HOME PAGE ══════════ -->
+  <section class="page active" id="page-home">
 
-  <!-- WATCH AD BUTTON -->
-  <div class="watch-btn-wrap">
-    <button class="watch-btn" id="watchBtn" onclick="watchAd()">
-      <span>▶</span>
-      <span>Watch Ad & Earn</span>
-      <span class="earn-badge">+$0.005</span>
-    </button>
-  </div>
-  <div class="watch-info">Each ad earns you 50% of AdGram revenue • Instant credit</div>
-
-  <!-- HOW IT WORKS -->
-  <div class="section-title">How it works</div>
-  <div class="steps">
-    <div class="step-card">
-      <div class="step-num s1">1</div>
-      <div class="step-text">
-        <div class="st">Watch Short Ads</div>
-        <div class="sd">Tap the button above and watch a short ad served by AdGram</div>
+    <!-- BALANCE CARD -->
+    <div class="balance-card">
+      <div class="balance-label">Total Earned</div>
+      <div class="balance-amount">
+        <span class="currency">$</span><span id="totalBalance">0.00</span>
       </div>
-    </div>
-    <div class="step-card">
-      <div class="step-num s2">2</div>
-      <div class="step-text">
-        <div class="st">Earn Real Money</div>
-        <div class="sd">AdGram pays us and we share 50% of every ad's revenue with you</div>
+      <div class="balance-sub">
+        <span class="change" id="todayEarned">+$0.00 today</span>
+        <span>•</span>
+        <span>Updated just now</span>
       </div>
-    </div>
-    <div class="step-card">
-      <div class="step-num s3">3</div>
-      <div class="step-text">
-        <div class="st">Withdraw Instantly</div>
-        <div class="sd">Cash out your earnings to TON wallet once you reach $1.00</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- EARNINGS SPLIT -->
-  <div class="section-title">Earnings Breakdown</div>
-  <div class="breakdown-card">
-    <div class="breakdown-title"><span class="icon">⚡</span> Revenue Split Per Ad</div>
-    <div class="breakdown-row">
-      <div class="br-left">
-        <div class="br-dot" style="background:#FFD700"></div>
-        <div class="br-label">Your Earnings (You)</div>
-      </div>
-      <div class="br-pct gold">50%</div>
-    </div>
-    <div class="breakdown-row">
-      <div class="br-left">
-        <div class="br-dot" style="background:#00E5FF"></div>
-        <div class="br-label">Platform Fee</div>
-      </div>
-      <div class="br-pct cyan">50%</div>
-    </div>
-    <div class="breakdown-row">
-      <div class="br-left">
-        <div class="br-dot" style="background:#22D47A"></div>
-        <div class="br-label">Powered by AdGram</div>
-      </div>
-      <div class="br-pct" style="color:var(--success)">✓ Verified</div>
-    </div>
-  </div>
-
-  <!-- DAILY PROGRESS -->
-  <div class="section-title">Daily Goal</div>
-  <div class="progress-section">
-    <div class="prog-header">
-      <div class="prog-title">Daily Ads</div>
-      <div class="prog-count"><span id="adsCount">0</span> / 20 ads</div>
-    </div>
-    <div class="prog-bar">
-      <div class="prog-fill" id="progFill"></div>
-    </div>
-    <div class="prog-labels">
-      <span>0</span>
-      <span>Complete all 20 → earn <span>+$0.10</span> bonus</span>
-    </div>
-  </div>
-
-  <!-- RECENT EARNINGS -->
-  <div class="section-title">Recent Earnings</div>
-  <div class="earning-list" id="earningList">
-    <div class="earning-item" style="animation-delay:0.1s">
-      <div class="ei-left">
-        <div class="ei-icon">📺</div>
-        <div class="ei-info">
-          <div class="ei-title">Ad Reward</div>
-          <div class="ei-time">Waiting for your first ad...</div>
+      <div class="balance-stats">
+        <div class="stat-pill">
+          <div class="s-label">Ads Watched</div>
+          <div class="s-val gold" id="adsWatched">0</div>
+        </div>
+        <div class="stat-pill">
+          <div class="s-label">Per Ad</div>
+          <div class="s-val cyan">~$0.005</div>
         </div>
       </div>
-      <div class="ei-amount">$0.00</div>
     </div>
-  </div>
 
-  <!-- WITHDRAW -->
-  <div class="section-title">Withdraw</div>
-  <button class="withdraw-btn" onclick="withdraw()">
-    💳 Withdraw to TON Wallet
-  </button>
-  <div style="height:16px"></div>
+    <!-- WATCH AD BUTTON -->
+    <div class="watch-btn-wrap">
+      <button class="watch-btn" id="watchBtn" onclick="watchAd()">
+        <span>▶</span>
+        <span>Watch Ad & Earn</span>
+        <span class="earn-badge">+$0.005</span>
+      </button>
+    </div>
+    <div class="watch-info">Instant credit • Powered by AdsGram</div>
+
+    <!-- DAILY PROGRESS -->
+    <div class="section-title">Daily Goal</div>
+    <div class="progress-section">
+      <div class="prog-header">
+        <div class="prog-title">Daily Ads</div>
+        <div class="prog-count"><span id="adsCount">0</span> / <span id="dailyLimitLabel">20</span> ads</div>
+      </div>
+      <div class="prog-bar">
+        <div class="prog-fill" id="progFill"></div>
+      </div>
+      <div class="prog-labels">
+        <span>0</span>
+        <span>Complete all <span id="dailyLimitLabel2">20</span> → earn <span id="dailyBonusLabel">+$0.10</span> bonus</span>
+      </div>
+    </div>
+
+    <!-- RECENT EARNINGS -->
+    <div class="section-title">Recent Earnings</div>
+    <div class="earning-list" id="earningList"></div>
+  </section>
+
+  <!-- ══════════ LEADERBOARD PAGE ══════════ -->
+  <section class="page" id="page-leaderboard">
+    <div class="page-head">
+      <div class="pt">🏆 Leaderboard</div>
+      <div class="pd">Ranked by total ads watched</div>
+    </div>
+
+    <div class="seg-control">
+      <button class="seg-btn active" data-period="daily" onclick="setLbPeriod('daily')">Daily</button>
+      <button class="seg-btn" data-period="weekly" onclick="setLbPeriod('weekly')">Weekly</button>
+      <button class="seg-btn" data-period="monthly" onclick="setLbPeriod('monthly')">Monthly</button>
+    </div>
+
+    <div class="you-rank-card">
+      <div>
+        <div class="yr-label">Your Rank</div>
+        <div class="yr-ads"><span id="yrAds">0</span> ads watched</div>
+      </div>
+      <div class="yr-rank" id="yrRank">#--</div>
+    </div>
+
+    <div class="lb-list" id="lbList"></div>
+  </section>
+
+  <!-- ══════════ REFER PAGE ══════════ -->
+  <section class="page" id="page-refer">
+    <div class="page-head">
+      <div class="pt">👥 Refer Friends</div>
+      <div class="pd">Unlock more ads to watch every day</div>
+    </div>
+
+    <div class="refer-hero">
+      <div class="refer-icon">🎁</div>
+      <h2>Invite & Earn More</h2>
+      <p>Every friend who joins with your link gives you <b>+20 extra ads</b> to watch today.</p>
+
+      <div class="refer-link-box">
+        <div class="link-row">
+          <div class="lr-text" id="referLink">t.me/Ads2EarnBot?start=ref_000000</div>
+          <button class="copy-btn" onclick="copyReferral()">Copy</button>
+        </div>
+        <button class="share-btn" onclick="shareReferral()">📤 Share with a Friend</button>
+      </div>
+    </div>
+
+    <div class="refer-stats">
+      <div class="stat-pill">
+        <div class="s-label">Friends Invited</div>
+        <div class="s-val gold" id="referralCount">0</div>
+      </div>
+      <div class="stat-pill">
+        <div class="s-label">Bonus Ads Unlocked</div>
+        <div class="s-val cyan" id="referralBonusAds">0</div>
+      </div>
+    </div>
+
+    <button class="demo-btn" onclick="simulateReferral()">🧪 Simulate a friend joining (demo)</button>
+  </section>
+
+  <!-- ══════════ WALLET PAGE ══════════ -->
+  <section class="page" id="page-wallet">
+    <div class="page-head">
+      <div class="pt">💳 Wallet</div>
+      <div class="pd">Your balance and withdrawals</div>
+    </div>
+
+    <div class="balance-card">
+      <div class="wallet-hero">
+        <div class="wh-label">Available Balance</div>
+        <div class="wh-amount"><span class="currency">$</span><span id="walletBalance">0.00</span></div>
+      </div>
+      <div class="min-progress" id="minProgressWrap">
+        <div class="mp-row"><span>Min. withdraw $20.00</span><span id="minProgressPct">0%</span></div>
+        <div class="prog-bar"><div class="prog-fill" id="minProgFill"></div></div>
+      </div>
+    </div>
+
+    <div class="field-label">TON Wallet Address</div>
+    <input class="wallet-input" id="tonAddress" type="text" placeholder="UQ... your TON wallet address">
+
+    <button class="withdraw-btn" id="withdrawBtn" onclick="withdraw()">💸 Withdraw Funds</button>
+    <div class="wallet-note">Minimum withdrawal is $20.00 • Paid out to your TON wallet</div>
+
+    <div class="section-title">Withdrawal History</div>
+    <div class="earning-list" id="historyList">
+      <div class="history-empty">No withdrawals yet</div>
+    </div>
+  </section>
+
 </div>
 
 <!-- AD OVERLAY -->
@@ -769,64 +969,137 @@
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <div class="nav-item active">
+  <button class="nav-item active" data-page="home" onclick="switchPage('home')">
     <div class="nav-icon">🏠</div>
     <div class="nav-label">Home</div>
-  </div>
-  <div class="nav-item">
-    <div class="nav-icon">📊</div>
-    <div class="nav-label">Stats</div>
-  </div>
-  <div class="nav-item">
+  </button>
+  <button class="nav-item" data-page="leaderboard" onclick="switchPage('leaderboard')">
+    <div class="nav-icon">🏆</div>
+    <div class="nav-label">Leaderboard</div>
+  </button>
+  <button class="nav-item" data-page="refer" onclick="switchPage('refer')">
     <div class="nav-icon">👥</div>
     <div class="nav-label">Refer</div>
-  </div>
-  <div class="nav-item">
+  </button>
+  <button class="nav-item" data-page="wallet" onclick="switchPage('wallet')">
     <div class="nav-icon">💳</div>
     <div class="nav-label">Wallet</div>
-  </div>
+  </button>
 </div>
 
 <script>
-// ── TELEGRAM INIT ──
+// ════════════════════════════════════════
+// TELEGRAM INIT
+// ════════════════════════════════════════
 const tg = window.Telegram?.WebApp;
+let tgUserId = null;
 if (tg) {
   tg.ready();
   tg.expand();
   const user = tg.initDataUnsafe?.user;
   document.getElementById('username').textContent = user?.first_name || 'User';
+  tgUserId = user?.id || null;
 } else {
   document.getElementById('username').textContent = 'Demo User';
 }
 
-// ── STATE ──
+// ════════════════════════════════════════
+// ADSGRAM SDK INIT — block id 35199
+// ════════════════════════════════════════
+const ADSGRAM_BLOCK_ID = "35199";
+let AdController = null;
+try {
+  if (window.Adsgram) {
+    AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+  }
+} catch (e) {
+  console.warn('AdsGram init failed, falling back to demo ad flow', e);
+}
+
+// ════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════
+const PER_AD = 0.005;
+const BASE_DAILY_LIMIT = 20;
+const ADS_PER_REFERRAL = 20;
+const MIN_WITHDRAW = 20;
+
 let state = {
   balance: parseFloat(localStorage.getItem('balance') || '0'),
-  adsWatched: parseInt(localStorage.getItem('adsWatched') || '0'),
+  adsWatchedTotal: parseInt(localStorage.getItem('adsWatchedTotal') || '0'),
+  adsToday: parseInt(localStorage.getItem('adsToday') || '0'),
   todayEarned: parseFloat(localStorage.getItem('todayEarned') || '0'),
+  lastDate: localStorage.getItem('lastDate') || '',
+  referrals: parseInt(localStorage.getItem('referrals') || '0'),
   earnings: JSON.parse(localStorage.getItem('earnings') || '[]'),
+  history: JSON.parse(localStorage.getItem('history') || '[]'),
   isWatching: false
 };
 
-const PER_AD = 0.005;
+function checkDayReset() {
+  const today = new Date().toDateString();
+  if (state.lastDate !== today) {
+    state.adsToday = 0;
+    state.todayEarned = 0;
+    state.lastDate = today;
+    save();
+  }
+}
+
+function dailyLimit() {
+  return BASE_DAILY_LIMIT + state.referrals * ADS_PER_REFERRAL;
+}
 
 function save() {
   localStorage.setItem('balance', state.balance.toFixed(4));
-  localStorage.setItem('adsWatched', state.adsWatched);
+  localStorage.setItem('adsWatchedTotal', state.adsWatchedTotal);
+  localStorage.setItem('adsToday', state.adsToday);
   localStorage.setItem('todayEarned', state.todayEarned.toFixed(4));
-  localStorage.setItem('earnings', JSON.stringify(state.earnings.slice(0,20)));
+  localStorage.setItem('lastDate', state.lastDate);
+  localStorage.setItem('referrals', state.referrals);
+  localStorage.setItem('earnings', JSON.stringify(state.earnings.slice(0, 20)));
+  localStorage.setItem('history', JSON.stringify(state.history.slice(0, 20)));
 }
 
-function updateUI() {
-  document.getElementById('totalBalance').textContent = state.balance.toFixed(3);
-  document.getElementById('adsWatched').textContent = state.adsWatched;
-  document.getElementById('todayEarned').textContent = '+$' + state.todayEarned.toFixed(3) + ' today';
-  document.getElementById('adsCount').textContent = Math.min(state.adsWatched % 20, 20);
+// ════════════════════════════════════════
+// PAGE SWITCHING
+// ════════════════════════════════════════
+function switchPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === name));
+  if (name === 'leaderboard') renderLeaderboard();
+  if (name === 'wallet') renderWallet();
+  if (name === 'refer') renderRefer();
+}
 
-  const pct = Math.min((state.adsWatched % 20) / 20 * 100, 100);
-  setTimeout(() => {
-    document.getElementById('progFill').style.width = pct + '%';
-  }, 400);
+// ════════════════════════════════════════
+// HOME UI
+// ════════════════════════════════════════
+function updateUI() {
+  checkDayReset();
+
+  document.getElementById('totalBalance').textContent = state.balance.toFixed(3);
+  document.getElementById('adsWatched').textContent = state.adsWatchedTotal;
+  document.getElementById('todayEarned').textContent = '+$' + state.todayEarned.toFixed(3) + ' today';
+
+  const limit = dailyLimit();
+  document.getElementById('adsCount').textContent = Math.min(state.adsToday, limit);
+  document.getElementById('dailyLimitLabel').textContent = limit;
+  document.getElementById('dailyLimitLabel2').textContent = limit;
+  document.getElementById('dailyBonusLabel').textContent = '+$' + ((limit / BASE_DAILY_LIMIT) * 0.10).toFixed(2);
+
+  const pct = Math.min(state.adsToday / limit * 100, 100);
+  setTimeout(() => { document.getElementById('progFill').style.width = pct + '%'; }, 300);
+
+  const btn = document.getElementById('watchBtn');
+  if (state.adsToday >= limit && !state.isWatching) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>🔒</span><span>Daily Limit Reached</span>';
+  } else if (!state.isWatching) {
+    btn.disabled = false;
+    btn.innerHTML = '<span>▶</span><span>Watch Ad & Earn</span><span class="earn-badge">+$' + PER_AD.toFixed(3) + '</span>';
+  }
 
   renderEarnings();
 }
@@ -847,8 +1120,8 @@ function renderEarnings() {
       </div>`;
     return;
   }
-  list.innerHTML = state.earnings.slice(0,5).map((e, i) => `
-    <div class="earning-item" style="animation-delay:${i*0.07}s">
+  list.innerHTML = state.earnings.slice(0, 6).map((e, i) => `
+    <div class="earning-item" style="animation-delay:${i * 0.07}s">
       <div class="ei-left">
         <div class="ei-icon">📺</div>
         <div class="ei-info">
@@ -860,19 +1133,35 @@ function renderEarnings() {
     </div>`).join('');
 }
 
-// ── WATCH AD ──
+// ════════════════════════════════════════
+// WATCH AD FLOW (AdsGram + demo fallback)
+// ════════════════════════════════════════
 function watchAd() {
   if (state.isWatching) return;
-  state.isWatching = true;
+  checkDayReset();
+  if (state.adsToday >= dailyLimit()) {
+    showToast('🔒 Daily limit reached — invite friends for more!');
+    return;
+  }
 
+  state.isWatching = true;
   const btn = document.getElementById('watchBtn');
   btn.innerHTML = '<div class="spinner"></div><span>Loading Ad...</span>';
   btn.disabled = true;
 
-  // Here you integrate AdGram SDK:
-  // window.AdController?.show() or similar AdGram call
-  // For demo: simulate ad flow
-  setTimeout(() => showAdOverlay(), 800);
+  if (AdController) {
+    AdController.show()
+      .then(() => { completeAd(); })
+      .catch(() => {
+        // user skipped the ad or an error occurred — no reward
+        state.isWatching = false;
+        updateUI();
+        showToast('⚠️ Ad skipped — no reward this time');
+      });
+  } else {
+    // fallback demo flow for testing outside Telegram
+    setTimeout(() => showAdOverlay(), 800);
+  }
 }
 
 function showAdOverlay() {
@@ -888,33 +1177,28 @@ function showAdOverlay() {
     document.getElementById('adProgFill').style.width = ((5 - t) / 5 * 100) + '%';
     if (t <= 0) {
       clearInterval(interval);
+      document.getElementById('adOverlay').classList.remove('show');
       completeAd();
     }
   }, 1000);
 }
 
 function completeAd() {
-  document.getElementById('adOverlay').classList.remove('show');
-  const btn = document.getElementById('watchBtn');
-
   state.balance += PER_AD;
-  state.adsWatched++;
+  state.adsWatchedTotal++;
+  state.adsToday++;
   state.todayEarned += PER_AD;
 
   const now = new Date();
-  const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   state.earnings.unshift({ amount: PER_AD, time: timeStr });
 
   save();
   updateUI();
   showToast('+$' + PER_AD.toFixed(4) + ' earned! 🎉');
 
-  // Haptic feedback
   tg?.HapticFeedback?.notificationOccurred('success');
-
   state.isWatching = false;
-  btn.innerHTML = '<span>▶</span><span>Watch Ad & Earn</span><span class="earn-badge">+$0.005</span>';
-  btn.disabled = false;
 }
 
 function showToast(msg) {
@@ -924,16 +1208,177 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-function withdraw() {
-  if (state.balance < 1.0) {
-    showToast('⚠️ Min withdrawal: $1.00');
-    return;
-  }
-  // TODO: integrate TON payment
-  showToast('💳 Redirecting to TON wallet...');
+// ════════════════════════════════════════
+// LEADERBOARD (daily / weekly / monthly)
+// ════════════════════════════════════════
+let lbPeriod = 'daily';
+
+const LB_NAMES = ['Alex_99','Mira K.','CryptoFox','Sam_TG','Lena B.','RoboNick','AnaStar','VikTOR','Dasha_W','OmarX','PixelJoy','Yuki_M'];
+const LB_AVATARS = ['🦊','🐼','🐸','🦁','🐯','🐨','🐵','🐺','🦄','🐲','🦉','🐱'];
+
+const LB_DATA = {
+  daily:   [88, 76, 71, 64, 58, 52, 47, 41, 35, 29, 24, 18],
+  weekly:  [410, 388, 350, 312, 290, 265, 230, 198, 170, 145, 120, 95],
+  monthly: [1620, 1480, 1390, 1250, 1110, 980, 860, 740, 610, 500, 410, 320]
+};
+
+function setLbPeriod(p) {
+  lbPeriod = p;
+  document.querySelectorAll('.seg-btn').forEach(b => b.classList.toggle('active', b.dataset.period === p));
+  renderLeaderboard();
 }
 
-// ── COIN RAIN ANIMATION ──
+function yourCountFor(period) {
+  // Demo approximation: daily uses today's ads, weekly/monthly use lifetime total
+  if (period === 'daily') return state.adsToday;
+  return state.adsWatchedTotal;
+}
+
+function renderLeaderboard() {
+  const yourCount = yourCountFor(lbPeriod);
+  const mockRows = LB_DATA[lbPeriod].map((ads, i) => ({
+    name: LB_NAMES[i], avatar: LB_AVATARS[i], ads, you: false
+  }));
+
+  const combined = [...mockRows, { name: 'You', avatar: '👤', ads: yourCount, you: true }]
+    .sort((a, b) => b.ads - a.ads);
+
+  const yourRank = combined.findIndex(r => r.you) + 1;
+  document.getElementById('yrRank').textContent = '#' + yourRank;
+  document.getElementById('yrAds').textContent = yourCount;
+
+  const medals = ['🥇', '🥈', '🥉'];
+  document.getElementById('lbList').innerHTML = combined.slice(0, 12).map((r, i) => `
+    <div class="lb-row ${r.you ? 'is-you' : ''}" style="animation-delay:${i * 0.04}s">
+      <div class="lb-rank ${i < 3 ? 'medal' : ''}">${i < 3 ? medals[i] : '#' + (i + 1)}</div>
+      <div class="lb-avatar">${r.avatar}</div>
+      <div class="lb-name">${r.you ? '<span class="you-tag">You</span>' : r.name}</div>
+      <div class="lb-ads">${r.ads}<small>ads</small></div>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════
+// REFER
+// ════════════════════════════════════════
+function getRefCode() {
+  let code = localStorage.getItem('refCode');
+  if (!code) {
+    code = tgUserId ? String(tgUserId) : Math.random().toString(36).slice(2, 9);
+    localStorage.setItem('refCode', code);
+  }
+  return code;
+}
+
+function getReferralLink() {
+  // Replace "Ads2EarnBot" with your actual Telegram bot username
+  return `https://t.me/Ads2EarnBot?start=ref_${getRefCode()}`;
+}
+
+function renderRefer() {
+  document.getElementById('referLink').textContent = getReferralLink().replace('https://', '');
+  document.getElementById('referralCount').textContent = state.referrals;
+  document.getElementById('referralBonusAds').textContent = state.referrals * ADS_PER_REFERRAL;
+}
+
+function copyReferral() {
+  const link = getReferralLink();
+  navigator.clipboard?.writeText(link).then(() => {
+    showToast('🔗 Referral link copied!');
+  }).catch(() => {
+    showToast('🔗 ' + link);
+  });
+}
+
+function shareReferral() {
+  const link = getReferralLink();
+  const text = 'Join me on Ads2Earn and earn real money watching ads! 💰';
+  if (tg?.openTelegramLink) {
+    tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
+  } else {
+    copyReferral();
+  }
+}
+
+// Demo-only: simulates a friend joining through your link.
+// In production, increment `referrals` from your backend once it verifies
+// a new user actually opened the bot via your start_param.
+function simulateReferral() {
+  state.referrals++;
+  save();
+  renderRefer();
+  updateUI();
+  showToast('🎉 Friend joined! +20 ads unlocked');
+}
+
+// ════════════════════════════════════════
+// WALLET
+// ════════════════════════════════════════
+function renderWallet() {
+  document.getElementById('walletBalance').textContent = state.balance.toFixed(3);
+
+  const pct = Math.min(state.balance / MIN_WITHDRAW * 100, 100);
+  document.getElementById('minProgFill').style.width = pct + '%';
+  document.getElementById('minProgressPct').textContent = Math.floor(pct) + '%';
+
+  const btn = document.getElementById('withdrawBtn');
+  if (state.balance >= MIN_WITHDRAW) {
+    btn.disabled = false;
+    btn.innerHTML = '💸 Withdraw $' + state.balance.toFixed(2);
+    document.getElementById('minProgressWrap').style.display = 'none';
+  } else {
+    btn.disabled = true;
+    btn.innerHTML = '💸 Withdraw Funds';
+    document.getElementById('minProgressWrap').style.display = 'block';
+  }
+
+  renderHistory();
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if (state.history.length === 0) {
+    list.innerHTML = '<div class="history-empty">No withdrawals yet</div>';
+    return;
+  }
+  list.innerHTML = state.history.slice(0, 10).map((h, i) => `
+    <div class="earning-item" style="animation-delay:${i * 0.06}s">
+      <div class="ei-left">
+        <div class="ei-icon">💳</div>
+        <div class="ei-info">
+          <div class="ei-title">Withdrawal</div>
+          <div class="ei-time">${h.time} • ${h.address}</div>
+        </div>
+      </div>
+      <div class="ei-amount neg">-$${h.amount.toFixed(2)}</div>
+    </div>`).join('');
+}
+
+function withdraw() {
+  if (state.balance < MIN_WITHDRAW) {
+    showToast('⚠️ Minimum withdrawal is $' + MIN_WITHDRAW.toFixed(2));
+    return;
+  }
+  const address = document.getElementById('tonAddress').value.trim();
+  if (!address) {
+    showToast('⚠️ Enter your TON wallet address');
+    return;
+  }
+
+  const amount = state.balance;
+  const now = new Date();
+  const timeStr = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  state.history.unshift({ amount, address: address.slice(0, 6) + '...' + address.slice(-4), time: timeStr });
+  state.balance = 0;
+
+  save();
+  renderWallet();
+  updateUI();
+  showToast('✅ Withdrawal requested!');
+}
+
+// ════════════════════════════════════════
+// COIN RAIN ANIMATION
+// ════════════════════════════════════════
 const canvas = document.getElementById('coinCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -944,13 +1389,13 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
-const coins = Array.from({length: 18}, () => ({
+const coins = Array.from({ length: 18 }, () => ({
   x: Math.random() * window.innerWidth,
   y: Math.random() * window.innerHeight - window.innerHeight,
   size: Math.random() * 10 + 8,
   speed: Math.random() * 0.6 + 0.3,
   opacity: Math.random() * 0.5 + 0.15,
-  char: ['₿','$','💰','●','◉'][Math.floor(Math.random() * 5)]
+  char: ['₿', '$', '💰', '●', '◉'][Math.floor(Math.random() * 5)]
 }));
 
 function drawCoins() {
@@ -972,7 +1417,10 @@ function drawCoins() {
 }
 drawCoins();
 
-// ── INIT ──
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+checkDayReset();
 updateUI();
 </script>
 </body>
