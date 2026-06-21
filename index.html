@@ -606,18 +606,6 @@
     margin-top: 16px;
   }
 
-  .demo-btn {
-    width: 100%;
-    margin-top: 16px;
-    background: transparent;
-    border: 1.5px dashed rgba(255,255,255,0.15);
-    border-radius: 12px;
-    padding: 12px;
-    font-size: 12px;
-    color: var(--muted);
-    cursor: pointer;
-  }
-
   /* ── WALLET PAGE ── */
   .wallet-hero {
     text-align: center;
@@ -722,6 +710,12 @@
     transform: translateX(-50%) translateY(0);
   }
 
+  .toast.error {
+    background: #2A1A1A;
+    border-color: rgba(255,92,92,0.3);
+    color: var(--danger);
+  }
+
   /* ── BOTTOM NAV ── */
   .bottom-nav {
     position: fixed;
@@ -763,6 +757,25 @@
   }
 
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── GATE (non-Telegram) ── */
+  .gate {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg-deep);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    padding: 30px;
+    text-align: center;
+  }
+  .gate.show { display: flex; }
+  .gate-icon { font-size: 44px; }
+  .gate-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--gold); }
+  .gate-sub { font-size: 13px; color: var(--muted); max-width: 280px; line-height: 1.6; }
 
   /* ── AD OVERLAY ── */
   .ad-overlay {
@@ -983,8 +996,6 @@
         <div class="s-val cyan" id="referralBonusAds">0</div>
       </div>
     </div>
-
-    <button class="demo-btn" onclick="simulateReferral()">🧪 Simulate a friend joining (demo)</button>
   </section>
 
   <!-- ══════════ WALLET PAGE ══════════ -->
@@ -1017,6 +1028,13 @@
     </div>
   </section>
 
+</div>
+
+<!-- NON-TELEGRAM GATE -->
+<div class="gate" id="gate">
+  <div class="gate-icon">🔒</div>
+  <div class="gate-title">Open inside Telegram</div>
+  <div class="gate-sub">This app verifies every reward with Telegram, so it only works when opened from your Telegram bot — not in a regular browser tab.</div>
 </div>
 
 <!-- AD OVERLAY -->
@@ -1061,24 +1079,38 @@
 
 <script>
 // ════════════════════════════════════════
+// ⚠️ CONFIG — fill these in after you deploy
+// ════════════════════════════════════════
+const API_BASE = 'https://YOUR-WORKER-NAME.YOUR-SUBDOMAIN.workers.dev'; // <-- your deployed Worker URL (no trailing slash)
+const BOT_USERNAME = 'Ads2EarnBot'; // <-- your bot's @username, without the @
+
+const PER_AD = 0.001;            // mirrors PER_AD_MICROS in worker.js, for display only
+const BASE_DAILY_LIMIT = 50;     // mirrors BASE_DAILY_LIMIT in worker.js, fallback before server responds
+const ADS_PER_REFERRAL = 20;
+const MIN_WITHDRAW = 20;
+const ADSGRAM_BLOCK_ID = "35767";
+
+// ════════════════════════════════════════
 // TELEGRAM INIT
 // ════════════════════════════════════════
 const tg = window.Telegram?.WebApp;
-let tgUserId = null;
+let initDataRaw = null;
+let isTelegram = false;
+
 if (tg) {
   tg.ready();
   tg.expand();
-  const user = tg.initDataUnsafe?.user;
-  document.getElementById('username').textContent = user?.first_name || 'User';
-  tgUserId = user?.id || null;
+  initDataRaw = tg.initData || null;   // raw string — sent to backend for verification
+  isTelegram = !!initDataRaw;
+  const u = tg.initDataUnsafe?.user;
+  document.getElementById('username').textContent = u?.first_name || 'User';
 } else {
   document.getElementById('username').textContent = 'Demo User';
 }
 
 // ════════════════════════════════════════
-// ADSGRAM SDK INIT — block id 35199
+// ADSGRAM SDK INIT
 // ════════════════════════════════════════
-const ADSGRAM_BLOCK_ID = "35767";
 let AdController = null;
 try {
   if (window.Adsgram) {
@@ -1089,48 +1121,73 @@ try {
 }
 
 // ════════════════════════════════════════
-// STATE
+// API HELPER — every call is authenticated with Telegram's initData
 // ════════════════════════════════════════
-const PER_AD = 0.001;
-const BASE_DAILY_LIMIT = 50;
-const ADS_PER_REFERRAL = 20;
-const MIN_WITHDRAW = 20;
-
-let state = {
-  balance: parseFloat(localStorage.getItem('balance') || '0'),
-  adsWatchedTotal: parseInt(localStorage.getItem('adsWatchedTotal') || '0'),
-  adsToday: parseInt(localStorage.getItem('adsToday') || '0'),
-  todayEarned: parseFloat(localStorage.getItem('todayEarned') || '0'),
-  lastDate: localStorage.getItem('lastDate') || '',
-  referrals: parseInt(localStorage.getItem('referrals') || '0'),
-  earnings: JSON.parse(localStorage.getItem('earnings') || '[]'),
-  history: JSON.parse(localStorage.getItem('history') || '[]'),
-  isWatching: false
-};
-
-function checkDayReset() {
-  const today = new Date().toDateString();
-  if (state.lastDate !== today) {
-    state.adsToday = 0;
-    state.todayEarned = 0;
-    state.lastDate = today;
-    save();
+async function apiFetch(path, options = {}) {
+  if (!isTelegram) {
+    const err = new Error('not-telegram');
+    err.code = 'NOT_TELEGRAM';
+    throw err;
   }
+  let res;
+  try {
+    res = await fetch(API_BASE + path, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'tma ' + initDataRaw,
+        ...(options.headers || {}),
+      },
+    });
+  } catch (networkErr) {
+    const err = new Error('network-error');
+    err.code = 'NETWORK';
+    throw err;
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(data.error || 'request-failed');
+    err.status = res.status;
+    err.data = data;
+    throw err;
+  }
+  return data;
 }
 
-function dailyLimit() {
-  return BASE_DAILY_LIMIT + state.referrals * ADS_PER_REFERRAL;
-}
+// ════════════════════════════════════════
+// STATE — the server is the source of truth for money.
+// sessionEarnings is purely a local, cosmetic "recent activity" list
+// for the current visit (it resets on reload).
+// ════════════════════════════════════════
+let serverState = {
+  balance: 0,
+  adsToday: 0,
+  dailyLimit: BASE_DAILY_LIMIT,
+  adsWatchedTotal: 0,
+  todayEarned: 0,
+  referralsCount: 0,
+};
+let referralCode = null;
+let sessionEarnings = [];
+let isWatching = false;
+let lbPeriod = 'daily';
 
-function save() {
-  localStorage.setItem('balance', state.balance.toFixed(4));
-  localStorage.setItem('adsWatchedTotal', state.adsWatchedTotal);
-  localStorage.setItem('adsToday', state.adsToday);
-  localStorage.setItem('todayEarned', state.todayEarned.toFixed(4));
-  localStorage.setItem('lastDate', state.lastDate);
-  localStorage.setItem('referrals', state.referrals);
-  localStorage.setItem('earnings', JSON.stringify(state.earnings.slice(0, 20)));
-  localStorage.setItem('history', JSON.stringify(state.history.slice(0, 20)));
+// ════════════════════════════════════════
+// BOOTSTRAP
+// ════════════════════════════════════════
+async function init() {
+  if (!isTelegram) {
+    document.getElementById('gate').classList.add('show');
+    return;
+  }
+  try {
+    const res = await apiFetch('/api/auth', { method: 'POST' });
+    serverState = res.user;
+    referralCode = res.referralCode;
+    renderHome();
+  } catch (e) {
+    showToast('⚠️ Could not connect — pull to refresh', true);
+  }
 }
 
 // ════════════════════════════════════════
@@ -1148,27 +1205,25 @@ function switchPage(name) {
 // ════════════════════════════════════════
 // HOME UI
 // ════════════════════════════════════════
-function updateUI() {
-  checkDayReset();
+function renderHome() {
+  document.getElementById('totalBalance').textContent = serverState.balance.toFixed(3);
+  document.getElementById('adsWatched').textContent = serverState.adsWatchedTotal;
+  document.getElementById('todayEarned').textContent = '+$' + serverState.todayEarned.toFixed(3) + ' today';
 
-  document.getElementById('totalBalance').textContent = state.balance.toFixed(3);
-  document.getElementById('adsWatched').textContent = state.adsWatchedTotal;
-  document.getElementById('todayEarned').textContent = '+$' + state.todayEarned.toFixed(3) + ' today';
-
-  const limit = dailyLimit();
-  document.getElementById('adsCount').textContent = Math.min(state.adsToday, limit);
+  const limit = serverState.dailyLimit || BASE_DAILY_LIMIT;
+  document.getElementById('adsCount').textContent = Math.min(serverState.adsToday, limit);
   document.getElementById('dailyLimitLabel').textContent = limit;
   document.getElementById('dailyLimitLabel2').textContent = limit;
   document.getElementById('dailyBonusLabel').textContent = '+$' + ((limit / BASE_DAILY_LIMIT) * 0.10).toFixed(2);
 
-  const pct = Math.min(state.adsToday / limit * 100, 100);
+  const pct = Math.min(serverState.adsToday / limit * 100, 100);
   setTimeout(() => { document.getElementById('progFill').style.width = pct + '%'; }, 300);
 
   const btn = document.getElementById('watchBtn');
-  if (state.adsToday >= limit && !state.isWatching) {
+  if (serverState.adsToday >= limit && !isWatching) {
     btn.disabled = true;
     btn.innerHTML = '<span>🔒</span><span>Daily Limit Reached</span>';
-  } else if (!state.isWatching) {
+  } else if (!isWatching) {
     btn.disabled = false;
     btn.innerHTML = '<span>▶</span><span>Watch Ad & Earn</span><span class="earn-badge">+$' + PER_AD.toFixed(3) + '</span>';
   }
@@ -1178,7 +1233,7 @@ function updateUI() {
 
 function renderEarnings() {
   const list = document.getElementById('earningList');
-  if (state.earnings.length === 0) {
+  if (sessionEarnings.length === 0) {
     list.innerHTML = `
       <div class="earning-item" style="animation-delay:0.1s">
         <div class="ei-left">
@@ -1192,7 +1247,7 @@ function renderEarnings() {
       </div>`;
     return;
   }
-  list.innerHTML = state.earnings.slice(0, 6).map((e, i) => `
+  list.innerHTML = sessionEarnings.slice(0, 6).map((e, i) => `
     <div class="earning-item" style="animation-delay:${i * 0.07}s">
       <div class="ei-left">
         <div class="ei-icon">📺</div>
@@ -1207,51 +1262,49 @@ function renderEarnings() {
 
 // ════════════════════════════════════════
 // WATCH AD FLOW (AdsGram + demo fallback)
+// Reward is only ever granted by the server response to /api/ads/watch.
 // ════════════════════════════════════════
 function watchAd() {
-  if (state.isWatching) return;
-  checkDayReset();
-  if (state.adsToday >= dailyLimit()) {
-    showToast('🔒 Daily limit reached — invite friends for more!');
+  if (isWatching) return;
+  if (!isTelegram) {
+    showToast('⚠️ Open this app from Telegram to earn', true);
+    return;
+  }
+  if (serverState.adsToday >= (serverState.dailyLimit || BASE_DAILY_LIMIT)) {
+    showToast('🔒 Daily limit reached — invite friends for more!', true);
     return;
   }
 
-  state.isWatching = true;
+  isWatching = true;
   const btn = document.getElementById('watchBtn');
   btn.innerHTML = '<div class="spinner"></div><span>Loading Ad...</span>';
   btn.disabled = true;
 
   if (AdController) {
     let timedOut = false;
-    // Safety net only: if AdsGram truly has no ad to fill, its promise can
-    // hang forever. Give real ads plenty of room (most run 15-45s) before
-    // unlocking the button — and even if this fires, a late .then() will
-    // still grant the reward, so nothing is ever lost.
     const noFillTimeout = setTimeout(() => {
       timedOut = true;
-      if (state.isWatching) {
-        state.isWatching = false;
-        updateUI();
-        showToast('⚠️ Taking longer than usual — you can try again');
+      if (isWatching) {
+        isWatching = false;
+        renderHome();
+        showToast('⚠️ Taking longer than usual — you can try again', true);
       }
     }, 75000);
 
     AdController.show()
       .then(() => {
         clearTimeout(noFillTimeout);
-        completeAd();
+        if (!timedOut) completeAd();
       })
       .catch(() => {
         clearTimeout(noFillTimeout);
         if (!timedOut) {
-          // user skipped the ad or an error occurred — no reward
-          state.isWatching = false;
-          updateUI();
-          showToast('⚠️ Ad skipped — no reward this time');
+          isWatching = false;
+          renderHome();
+          showToast('⚠️ Ad skipped — no reward this time', true);
         }
       });
   } else {
-    // fallback demo flow for testing outside Telegram
     setTimeout(() => showAdOverlay(), 800);
   }
 }
@@ -1275,118 +1328,77 @@ function showAdOverlay() {
   }, 1000);
 }
 
-function completeAd() {
-  state.balance += PER_AD;
-  state.adsWatchedTotal++;
-  state.adsToday++;
-  state.todayEarned += PER_AD;
+async function completeAd() {
+  try {
+    const res = await apiFetch('/api/ads/watch', { method: 'POST' });
+    serverState = res.user;
 
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  state.earnings.unshift({ amount: PER_AD, time: timeStr });
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    sessionEarnings.unshift({ amount: res.rewardMicros / 1_000_000, time: timeStr });
 
-  state.isWatching = false;
-  save();
-  updateUI();
-  showToast('+$' + PER_AD.toFixed(4) + ' earned! 🎉');
-
-  tg?.HapticFeedback?.notificationOccurred('success');
+    isWatching = false;
+    renderHome();
+    showToast('+$' + (res.rewardMicros / 1_000_000).toFixed(4) + ' earned! 🎉');
+    tg?.HapticFeedback?.notificationOccurred('success');
+  } catch (e) {
+    isWatching = false;
+    renderHome();
+    showToast('⚠️ ' + (e.data?.error || 'Could not record your reward'), true);
+  }
 }
 
-function showToast(msg) {
+function showToast(msg, isError = false) {
   const t = document.getElementById('toast');
   t.textContent = msg;
+  t.classList.toggle('error', isError);
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
 // ════════════════════════════════════════
-// LEADERBOARD (daily / weekly / monthly)
+// LEADERBOARD (daily / weekly / monthly) — live from the backend
 // ════════════════════════════════════════
-let lbPeriod = 'daily';
-
-const LB_NAMES = ['Alex_99','Mira K.','CryptoFox','Sam_TG','Lena B.','RoboNick','AnaStar','VikTOR','Dasha_W','OmarX','PixelJoy','Yuki_M'];
-const LB_AVATARS = ['🦊','🐼','🐸','🦁','🐯','🐨','🐵','🐺','🦄','🐲','🦉','🐱'];
-
-const LB_DATA = {
-  daily:   [88, 76, 71, 64, 58, 52, 47, 41, 35, 29, 24, 18],
-  weekly:  [410, 388, 350, 312, 290, 265, 230, 198, 170, 145, 120, 95],
-  monthly: [1620, 1480, 1390, 1250, 1110, 980, 860, 740, 610, 500, 410, 320]
-};
-
 function setLbPeriod(p) {
   lbPeriod = p;
   document.querySelectorAll('.seg-btn').forEach(b => b.classList.toggle('active', b.dataset.period === p));
   renderLeaderboard();
 }
 
-function yourCountFor(period) {
-  // Demo approximation: daily uses today's ads, weekly/monthly use lifetime total
-  if (period === 'daily') return state.adsToday;
-  return state.adsWatchedTotal;
-}
+async function renderLeaderboard() {
+  if (!isTelegram) return;
+  document.getElementById('lbList').innerHTML = '<div class="history-empty">Loading...</div>';
+  try {
+    const res = await apiFetch('/api/leaderboard?period=' + lbPeriod);
+    document.getElementById('yrRank').textContent = res.yourRank ? '#' + res.yourRank : '#--';
+    const me = res.leaderboard.find(r => r.you);
+    document.getElementById('yrAds').textContent = me ? me.ads : 0;
 
-function renderLeaderboard() {
-  const yourCount = yourCountFor(lbPeriod);
-  const mockRows = LB_DATA[lbPeriod].map((ads, i) => ({
-    name: LB_NAMES[i], avatar: LB_AVATARS[i], ads, you: false
-  }));
-
-  const combined = [...mockRows, { name: 'You', avatar: '👤', ads: yourCount, you: true }]
-    .sort((a, b) => b.ads - a.ads);
-
-  const yourRank = combined.findIndex(r => r.you) + 1;
-  document.getElementById('yrRank').textContent = '#' + yourRank;
-  document.getElementById('yrAds').textContent = yourCount;
-
-  const medals = ['🥇', '🥈', '🥉'];
-  document.getElementById('lbList').innerHTML = combined.slice(0, 12).map((r, i) => `
-    <div class="lb-row ${r.you ? 'is-you' : ''}" style="animation-delay:${i * 0.04}s">
-      <div class="lb-rank ${i < 3 ? 'medal' : ''}">${i < 3 ? medals[i] : '#' + (i + 1)}</div>
-      <div class="lb-avatar">${r.avatar}</div>
-      <div class="lb-name">${r.you ? '<span class="you-tag">You</span>' : r.name}</div>
-      <div class="lb-ads">${r.ads}<small>ads</small></div>
-    </div>`).join('');
-}
-
-// ════════════════════════════════════════
-// REFER
-// ════════════════════════════════════════
-function getRefCode() {
-  let code = localStorage.getItem('refCode');
-  if (!code) {
-    code = tgUserId ? String(tgUserId) : Math.random().toString(36).slice(2, 9);
-    localStorage.setItem('refCode', code);
+    const medals = ['🥇', '🥈', '🥉'];
+    document.getElementById('lbList').innerHTML = res.leaderboard.map((r, i) => `
+      <div class="lb-row ${r.you ? 'is-you' : ''}" style="animation-delay:${i * 0.04}s">
+        <div class="lb-rank ${i < 3 ? 'medal' : ''}">${i < 3 ? medals[i] : '#' + r.rank}</div>
+        <div class="lb-avatar">${r.you ? '👤' : '🙂'}</div>
+        <div class="lb-name">${r.you ? '<span class="you-tag">You</span>' : r.name}</div>
+        <div class="lb-ads">${r.ads}<small>ads</small></div>
+      </div>`).join('');
+  } catch (e) {
+    document.getElementById('lbList').innerHTML = '<div class="history-empty">Could not load leaderboard</div>';
   }
-  return code;
 }
 
 // ════════════════════════════════════════
-// TASKS (Follow / Join links)
+// REFER — referral is credited server-side in /api/auth via start_param,
+// so this page just displays real counts from serverState.
 // ════════════════════════════════════════
-function openTask(url, isTelegramLink) {
-  if (tg) {
-    if (isTelegramLink && tg.openTelegramLink) {
-      tg.openTelegramLink(url);
-      return;
-    }
-    if (tg.openLink) {
-      tg.openLink(url);
-      return;
-    }
-  }
-  window.open(url, '_blank');
-}
-
 function getReferralLink() {
-  // Replace "Ads2EarnBot" with your actual Telegram bot username
-  return `https://t.me/Ads2EarnBot?start=ref_${getRefCode()}`;
+  return `https://t.me/${BOT_USERNAME}?start=ref_${referralCode || ''}`;
 }
 
 function renderRefer() {
   document.getElementById('referLink').textContent = getReferralLink().replace('https://', '');
-  document.getElementById('referralCount').textContent = state.referrals;
-  document.getElementById('referralBonusAds').textContent = state.referrals * ADS_PER_REFERRAL;
+  document.getElementById('referralCount').textContent = serverState.referralsCount;
+  document.getElementById('referralBonusAds').textContent = serverState.referralsCount * ADS_PER_REFERRAL;
 }
 
 function copyReferral() {
@@ -1408,31 +1420,37 @@ function shareReferral() {
   }
 }
 
-// Demo-only: simulates a friend joining through your link.
-// In production, increment `referrals` from your backend once it verifies
-// a new user actually opened the bot via your start_param.
-function simulateReferral() {
-  state.referrals++;
-  save();
-  renderRefer();
-  updateUI();
-  showToast('🎉 Friend joined! +20 ads unlocked');
+// ════════════════════════════════════════
+// TASKS (Follow / Join links)
+// ════════════════════════════════════════
+function openTask(url, isTelegramLink) {
+  if (tg) {
+    if (isTelegramLink && tg.openTelegramLink) {
+      tg.openTelegramLink(url);
+      return;
+    }
+    if (tg.openLink) {
+      tg.openLink(url);
+      return;
+    }
+  }
+  window.open(url, '_blank');
 }
 
 // ════════════════════════════════════════
-// WALLET
+// WALLET — balance, withdraw, history all come from the backend
 // ════════════════════════════════════════
-function renderWallet() {
-  document.getElementById('walletBalance').textContent = state.balance.toFixed(3);
+async function renderWallet() {
+  document.getElementById('walletBalance').textContent = serverState.balance.toFixed(3);
 
-  const pct = Math.min(state.balance / MIN_WITHDRAW * 100, 100);
+  const pct = Math.min(serverState.balance / MIN_WITHDRAW * 100, 100);
   document.getElementById('minProgFill').style.width = pct + '%';
   document.getElementById('minProgressPct').textContent = Math.floor(pct) + '%';
 
   const btn = document.getElementById('withdrawBtn');
-  if (state.balance >= MIN_WITHDRAW) {
+  if (serverState.balance >= MIN_WITHDRAW) {
     btn.disabled = false;
-    btn.innerHTML = '💸 Withdraw $' + state.balance.toFixed(2);
+    btn.innerHTML = '💸 Withdraw $' + serverState.balance.toFixed(2);
     document.getElementById('minProgressWrap').style.display = 'none';
   } else {
     btn.disabled = true;
@@ -1440,49 +1458,67 @@ function renderWallet() {
     document.getElementById('minProgressWrap').style.display = 'block';
   }
 
-  renderHistory();
+  if (!isTelegram) return;
+  try {
+    const res = await apiFetch('/api/wallet/history');
+    renderHistory(res.history);
+  } catch (e) {
+    // leave existing/empty history in place
+  }
 }
 
-function renderHistory() {
+function renderHistory(history) {
   const list = document.getElementById('historyList');
-  if (state.history.length === 0) {
+  if (!history || history.length === 0) {
     list.innerHTML = '<div class="history-empty">No withdrawals yet</div>';
     return;
   }
-  list.innerHTML = state.history.slice(0, 10).map((h, i) => `
+  list.innerHTML = history.map((h, i) => `
     <div class="earning-item" style="animation-delay:${i * 0.06}s">
       <div class="ei-left">
         <div class="ei-icon">💳</div>
         <div class="ei-info">
           <div class="ei-title">Withdrawal</div>
-          <div class="ei-time">${h.time} • ${h.address}</div>
+          <div class="ei-time">${h.time} • ${h.address} • ${h.status}</div>
         </div>
       </div>
       <div class="ei-amount neg">-$${h.amount.toFixed(2)}</div>
     </div>`).join('');
 }
 
-function withdraw() {
-  if (state.balance < MIN_WITHDRAW) {
-    showToast('⚠️ Minimum withdrawal is $' + MIN_WITHDRAW.toFixed(2));
+async function withdraw() {
+  if (!isTelegram) {
+    showToast('⚠️ Open this app from Telegram', true);
+    return;
+  }
+  if (serverState.balance < MIN_WITHDRAW) {
+    showToast('⚠️ Minimum withdrawal is $' + MIN_WITHDRAW.toFixed(2), true);
     return;
   }
   const address = document.getElementById('tonAddress').value.trim();
   if (!address) {
-    showToast('⚠️ Enter your TON wallet address');
+    showToast('⚠️ Enter your TON wallet address', true);
     return;
   }
 
-  const amount = state.balance;
-  const now = new Date();
-  const timeStr = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
-  state.history.unshift({ amount, address: address.slice(0, 6) + '...' + address.slice(-4), time: timeStr });
-  state.balance = 0;
+  const btn = document.getElementById('withdrawBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>';
 
-  save();
-  renderWallet();
-  updateUI();
-  showToast('✅ Withdrawal requested!');
+  try {
+    const res = await apiFetch('/api/wallet/withdraw', {
+      method: 'POST',
+      body: JSON.stringify({ tonAddress: address }),
+    });
+    serverState = res.user;
+    document.getElementById('tonAddress').value = '';
+    renderHome();
+    await renderWallet();
+    showToast('✅ Withdrawal requested!');
+  } catch (e) {
+    await renderWallet();
+    showToast('⚠️ ' + (e.data?.error || 'Withdrawal failed'), true);
+  }
 }
 
 // ════════════════════════════════════════
@@ -1529,8 +1565,7 @@ drawCoins();
 // ════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════
-checkDayReset();
-updateUI();
+init();
 </script>
 </body>
 </html>
