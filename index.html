@@ -1193,12 +1193,12 @@ function completeAd() {
   const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   state.earnings.unshift({ amount: PER_AD, time: timeStr });
 
+  state.isWatching = false;
   save();
   updateUI();
   showToast('+$' + PER_AD.toFixed(4) + ' earned! 🎉');
 
   tg?.HapticFeedback?.notificationOccurred('success');
-  state.isWatching = false;
 }
 
 function showToast(msg) {
