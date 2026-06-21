@@ -481,6 +481,42 @@
   .lb-ads { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: var(--white); }
   .lb-ads small { font-size: 10px; color: var(--muted); font-weight: 500; display:block; text-align:right; }
 
+  /* ── TASK PAGE ── */
+  .task-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .task-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: var(--cyan-dim);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+  }
+  .task-info { flex: 1; min-width: 0; }
+  .task-title { font-size: 13.5px; font-weight: 600; color: var(--white); }
+  .task-sub { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+  .task-btn {
+    background: linear-gradient(135deg, #00E5FF, #00A3C4);
+    border: none;
+    border-radius: 10px;
+    padding: 9px 18px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #0A0E1A;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .task-btn:active { transform: scale(0.96); }
+
   /* ── REFER PAGE ── */
   .refer-hero {
     background: linear-gradient(145deg, #141D2E 0%, #0D1525 100%);
@@ -824,7 +860,7 @@
         </div>
         <div class="stat-pill">
           <div class="s-label">Per Ad</div>
-          <div class="s-val cyan">~$0.005</div>
+          <div class="s-val cyan">~$0.001</div>
         </div>
       </div>
     </div>
@@ -834,7 +870,7 @@
       <button class="watch-btn" id="watchBtn" onclick="watchAd()">
         <span>▶</span>
         <span>Watch Ad & Earn</span>
-        <span class="earn-badge">+$0.005</span>
+        <span class="earn-badge">+$0.001</span>
       </button>
     </div>
     <div class="watch-info">Instant credit • Powered by AdsGram</div>
@@ -844,14 +880,14 @@
     <div class="progress-section">
       <div class="prog-header">
         <div class="prog-title">Daily Ads</div>
-        <div class="prog-count"><span id="adsCount">0</span> / <span id="dailyLimitLabel">20</span> ads</div>
+        <div class="prog-count"><span id="adsCount">0</span> / <span id="dailyLimitLabel">50</span> ads</div>
       </div>
       <div class="prog-bar">
         <div class="prog-fill" id="progFill"></div>
       </div>
       <div class="prog-labels">
         <span>0</span>
-        <span>Complete all <span id="dailyLimitLabel2">20</span> → earn <span id="dailyBonusLabel">+$0.10</span> bonus</span>
+        <span>Complete all <span id="dailyLimitLabel2">50</span> → earn <span id="dailyBonusLabel">+$0.10</span> bonus</span>
       </div>
     </div>
 
@@ -882,6 +918,32 @@
     </div>
 
     <div class="lb-list" id="lbList"></div>
+  </section>
+
+  <!-- ══════════ TASK PAGE ══════════ -->
+  <section class="page" id="page-task">
+    <div class="page-head">
+      <div class="pt">📋 Tasks</div>
+      <div class="pd">Support us and stay updated</div>
+    </div>
+
+    <div class="task-card">
+      <div class="task-icon">🎵</div>
+      <div class="task-info">
+        <div class="task-title">Follow us on TikTok</div>
+        <div class="task-sub">@adsgram1</div>
+      </div>
+      <button class="task-btn" onclick="openTask('https://tiktok.com/@adsgram1', false)">Follow</button>
+    </div>
+
+    <div class="task-card">
+      <div class="task-icon">📢</div>
+      <div class="task-info">
+        <div class="task-title">Join our Telegram channel</div>
+        <div class="task-sub">@adsgram12</div>
+      </div>
+      <button class="task-btn" onclick="openTask('https://t.me/adsgram12', true)">Join</button>
+    </div>
   </section>
 
   <!-- ══════════ REFER PAGE ══════════ -->
@@ -977,6 +1039,10 @@
     <div class="nav-icon">🏆</div>
     <div class="nav-label">Leaderboard</div>
   </button>
+  <button class="nav-item" data-page="task" onclick="switchPage('task')">
+    <div class="nav-icon">📋</div>
+    <div class="nav-label">Task</div>
+  </button>
   <button class="nav-item" data-page="refer" onclick="switchPage('refer')">
     <div class="nav-icon">👥</div>
     <div class="nav-label">Refer</div>
@@ -1019,8 +1085,8 @@ try {
 // ════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════
-const PER_AD = 0.005;
-const BASE_DAILY_LIMIT = 20;
+const PER_AD = 0.001;
+const BASE_DAILY_LIMIT = 50;
 const ADS_PER_REFERRAL = 20;
 const MIN_WITHDRAW = 20;
 
@@ -1150,9 +1216,28 @@ function watchAd() {
   btn.disabled = true;
 
   if (AdController) {
+    let settled = false;
+    // Safety net: if AdsGram has no ad to fill, its promise can hang
+    // forever without resolving or rejecting. Force-reset after 15s.
+    const noFillTimeout = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      state.isWatching = false;
+      updateUI();
+      showToast('⚠️ No ad available right now — try again shortly');
+    }, 15000);
+
     AdController.show()
-      .then(() => { completeAd(); })
+      .then(() => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(noFillTimeout);
+        completeAd();
+      })
       .catch(() => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(noFillTimeout);
         // user skipped the ad or an error occurred — no reward
         state.isWatching = false;
         updateUI();
@@ -1267,6 +1352,23 @@ function getRefCode() {
     localStorage.setItem('refCode', code);
   }
   return code;
+}
+
+// ════════════════════════════════════════
+// TASKS (Follow / Join links)
+// ════════════════════════════════════════
+function openTask(url, isTelegramLink) {
+  if (tg) {
+    if (isTelegramLink && tg.openTelegramLink) {
+      tg.openTelegramLink(url);
+      return;
+    }
+    if (tg.openLink) {
+      tg.openLink(url);
+      return;
+    }
+  }
+  window.open(url, '_blank');
 }
 
 function getReferralLink() {
